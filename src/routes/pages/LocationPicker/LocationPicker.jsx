@@ -19,7 +19,7 @@ export default function LocationPicker() {
         libraries: ["places"],
     });
 
-    const { itemSummary, totalAfterDiscount, showInput, setShowInput, address, serviceTitle, setMapLongitude, setMapLatitude, setAddressLocation, liveAddress, saveAddress, setLiveAddress ,totalVatRate} = useSummary();
+    const { itemSummary, totalAfterDiscount, showInput, setShowInput, address, serviceTitle, setMapLongitude, setMapLatitude,setAddressLocation, liveAddress, saveAddress, setLiveAddress, totalVatRate, mapLongitude, mapLatitude } = useSummary();
 
     const [selectedAddressId, setSelectedAddressId] = useState(
         liveAddress?.id || null
@@ -29,11 +29,17 @@ export default function LocationPicker() {
         setSelectedAddressId(addr.id);
         setLiveAddress(addr);
 
+        // Latitude, longitude সেট করুন
+        if (addr.latitude && addr.longitude) {
+            setMapLatitude(addr.latitude);
+            setMapLongitude(addr.longitude);
+            setAddressLocation(addr.displayAddress);
+        }
+
         setIsNextDisabled(false);
         setFromListSelection(true);
         setShowMapForNew(false);
     };
-
 
     const [isNextDisabled, setIsNextDisabled] = useState(true);
     const [, setMapAddressSelected] = useState(false);
@@ -44,7 +50,6 @@ export default function LocationPicker() {
     const [mapType, setMapType] = useState("roadmap");
     const [open, setOpen] = useState(false);
     const [showMapForNew, setShowMapForNew] = useState(false);
-
 
     const getAddressFromLatLng = (lat, lng) => {
         const geocoder = new window.google.maps.Geocoder();
@@ -117,10 +122,9 @@ export default function LocationPicker() {
         });
     };
 
-
     const handleNextClick = async () => {
         if (showMapForNew) {
-            navigate("/address");   // 🔥 go to address form
+            navigate("/address");
             return false;
         }
 
@@ -202,6 +206,10 @@ export default function LocationPicker() {
                                             setSelectedAddressId(null);
                                             setFromListSelection(false);
                                             setIsNextDisabled(true);
+                                            // নতুন address এর জন্য current location সেট করুন
+                                            if (mapLatitude && mapLongitude) {
+                                                setSelectedPos({ lat: mapLatitude, lng: mapLongitude });
+                                            }
                                         }}
                                         className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2"
                                     >
@@ -274,10 +282,7 @@ export default function LocationPicker() {
                                     />
                                 </GoogleMap>
                             </div>
-
                     }
-
-
                 </div>
 
                 <Summery

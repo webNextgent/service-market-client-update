@@ -150,19 +150,18 @@ const AdminBooking = () => {
         }
     };
 
-    // Get Google Maps URL - FIXED with proper coordinates
+    // Get Google Maps URL with actual coordinates
     const getGoogleMapsUrl = useCallback((booking) => {
         // First priority: actual coordinates from booking
         if (booking?.latitude && booking?.longitude) {
             return `https://www.google.com/maps?q=${booking.latitude},${booking.longitude}`;
         }
-        console.log('booking', booking);
 
         // Second priority: generate demo coordinates based on booking ID
         if (demoMode && booking?.id) {
             // Generate consistent coordinates based on booking id
             const idNum = parseInt(booking.id) || Math.floor(Math.random() * 1000);
-            const lat = 23.8103 + (idNum % 100) * 0.01; // Dhaka base with variation
+            const lat = 23.8103 + (idNum % 100) * 0.01;
             const lng = 90.4125 + (idNum % 100) * 0.01;
             return `https://www.google.com/maps?q=${lat.toFixed(6)},${lng.toFixed(6)}`;
         }
@@ -175,56 +174,44 @@ const AdminBooking = () => {
         return 'https://www.google.com/maps';
     }, [demoMode]);
 
-    // Generate DEMO coordinates for testing - No API key needed
-    const getDemoCoordinates = useCallback((booking) => {
+    // Get REAL coordinates from booking data
+    const getCoordinates = useCallback((booking) => {
         if (!booking) return { latitude: 23.8103, longitude: 90.4125 };
-
-        // Convert ID to number safely
+        
+        // Priority 1: Use real coordinates from booking
+        if (booking.latitude && booking.longitude) {
+            return {
+                latitude: Number(booking.latitude),
+                longitude: Number(booking.longitude)
+            };
+        }
+        
+        // Priority 2: Generate coordinates based on booking ID (fallback)
         let idNum;
         if (booking.id) {
-            // Extract numbers from ID if it contains letters
             const numMatch = booking.id.toString().match(/\d+/);
             idNum = numMatch ? parseInt(numMatch[0]) : Math.floor(Math.random() * 1000);
         } else {
             idNum = Math.floor(Math.random() * 1000);
         }
-
-        // Calculate coordinates properly
+        
         const lat = 23.8103 + (idNum % 100) * 0.01;
         const lng = 90.4125 + (idNum % 100) * 0.01;
-
-        // Return as numbers, not strings
+        
         return {
-            latitude: Number(lat.toFixed(6)),  // ✅ Convert to number
-            longitude: Number(lng.toFixed(6))   // ✅ Convert to number
+            latitude: Number(lat.toFixed(6)),
+            longitude: Number(lng.toFixed(6))
         };
     }, []);
 
     // Get Map Image URL - Using OpenStreetMap (No API Key Required)
-    const getMapImageUrl = useCallback((booking) => {
-        // Get coordinates (either real or demo)
-        const coords = booking?.latitude && booking?.longitude
-            ? { latitude: booking.latitude, longitude: booking.longitude }
-            : getDemoCoordinates(booking);
-
-        // Use OpenStreetMap static map
-        return `https://staticmap.openstreetmap.de/staticmap.php?center=${coords.latitude},${coords.longitude}&zoom=14&size=600x300&maptype=mapnik&markers=${coords.latitude},${coords.longitude},red-pushpin`;
-    }, [getDemoCoordinates]);
-
-    // Generate booking details text for sharing
-    // const generateShareText = (booking) => {
-    //     return `
-    //     📋 Booking Details\n━━━━━━━━━━━━━━━━━━━━\n
-    //     🔹 ID: ${booking.id}\n
-    //     🔹 Service: ${booking.serviceName}\n
-    //     🔹 Date: ${booking.date}\n
-    //     🔹 Time: ${booking.time}\n
-    //     🔹 Address: ${booking.address}\n
-    //     🔹 Live Link: ${booking.address}\n
-    //     🔹 Amount: $${booking.totalPay}\n
-    //     🔹 Status: ${booking.status}\n${booking.customerName ? `👤 Customer: ${booking.customerName}` : ''}\n${booking.phone ? `📞 Phone: ${booking.phone}` : ''}\n${booking.additionalInfo ? `📝 Notes: ${booking.additionalInfo}` : ''}
-    //     \n━━━━━━━━━━━━━━━━━━━━`;
-    // };
+    // const getMapImageUrl = useCallback((booking) => {
+    //     // Get coordinates
+    //     const coords = getCoordinates(booking);
+        
+    //     // Use OpenStreetMap static map
+    //     return `https://staticmap.openstreetmap.de/staticmap.php?center=${coords.latitude},${coords.longitude}&zoom=14&size=600x300&maptype=mapnik&markers=${coords.latitude},${coords.longitude},red-pushpin`;
+    // }, [getCoordinates]);
 
     // WhatsApp/share-friendly version with better formatting
     const generateShareText = (booking) => {
@@ -256,8 +243,6 @@ const AdminBooking = () => {
         // Filter out empty lines and join
         return lines.filter(line => line !== "").join("\n");
     };
-
-
 
     // Handle share actions
     const handleShare = (method) => {
@@ -351,11 +336,6 @@ const AdminBooking = () => {
                         <h1 className="text-3xl font-bold text-gray-900">Bookings</h1>
                         <p className="text-gray-600 mt-2">
                             {bookings.length} total bookings • {completedBookings} completed • {formatCurrency(totalRevenue)} revenue
-                            {/* {demoMode && (
-                                <span className="ml-4 text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                                    Demo Map Mode
-                                </span>
-                            )} */}
                         </p>
                     </div>
 
@@ -512,13 +492,15 @@ const AdminBooking = () => {
                                                             <FaMapMarkerAlt className="w-4 h-4 mt-1 flex-shrink-0 text-gray-400" />
                                                             <span className="line-clamp-2">{book.address}</span>
                                                         </div>
-                                                        <button
-                                                            onClick={() => setBookingDetails(book)}
-                                                            className="mt-3 text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
-                                                        >
-                                                            <FaMap className="w-3 h-3" />
-                                                            View on Map
-                                                        </button>
+                                                        <div className="mt-2 flex items-center gap-2">
+                                                            <button
+                                                                onClick={() => setBookingDetails(book)}
+                                                                className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                                                            >
+                                                                <FaMap className="w-3 h-3" />
+                                                                View on Map
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </td>
                                                 <td className="py-5 px-6">
@@ -877,7 +859,7 @@ const AdminBooking = () => {
                                         />
                                     </div>
                                 </div>
-                            </div>
+                            </div>  
 
                             {/* Address with Map Preview */}
                             <div>
@@ -886,6 +868,11 @@ const AdminBooking = () => {
                                         Address
                                     </label>
                                     <div className="flex items-center gap-2">
+                                        {selectedBooking.latitude && selectedBooking.longitude && (
+                                            <span className="text-xs text-green-600">
+                                                📍 {selectedBooking.latitude}, {selectedBooking.longitude}
+                                            </span>
+                                        )}
                                         <a
                                             href={getGoogleMapsUrl(selectedBooking)}
                                             target="_blank"
@@ -907,26 +894,32 @@ const AdminBooking = () => {
                                 />
 
                                 {/* Map Preview */}
-                                <div className="mt-4">
+                                {/* <div className="mt-4">
                                     <div className="flex items-center gap-3 mb-3">
                                         <h4 className="text-sm font-semibold text-gray-800">Location Preview</h4>
                                         <div className="h-px flex-1 bg-gray-200"></div>
                                     </div>
                                     <div className="relative rounded-xl overflow-hidden border border-gray-300">
-                                        <img
-                                            src={getMapImageUrl(selectedBooking)}
-                                            alt="Location Map"
-                                            className="w-full h-48 object-cover"
-                                            onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = `https://via.placeholder.com/600x300/cccccc/808080?text=Map+Preview+${selectedBooking.id}`;
-                                            }}
-                                        />
+                                        {selectedBooking.latitude && selectedBooking.longitude ? (
+                                            <img
+                                                src={getMapImageUrl(selectedBooking)}
+                                                alt="Location Map"
+                                                className="w-full h-48 object-cover"
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = `https://via.placeholder.com/600x300/cccccc/808080?text=Map+Preview`;
+                                                }}
+                                            />
+                                        ) : (
+                                            <div className="h-48 bg-gray-100 flex items-center justify-center">
+                                                <p className="text-gray-500">No coordinates available</p>
+                                            </div>
+                                        )}
                                         <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-2 rounded-lg text-sm">
-                                            📍 {selectedBooking.address ? selectedBooking.address.substring(0, 30) + '...' : 'Location Preview'}
+                                            📍 {selectedBooking.address ? selectedBooking.address.substring(0, 30) + '...' : 'Location'}
                                         </div>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
 
                             {/* Additional Information */}
@@ -1079,35 +1072,29 @@ const AdminBooking = () => {
 
                                         <div className="p-5 bg-gray-50 rounded-xl border border-gray-200 mb-4">
                                             <p className="text-gray-700 whitespace-pre-wrap">{bookingDetails.address}</p>
-                                            {/* {demoMode && bookingDetails.address && (
-                                                <div className="mt-3 text-sm text-gray-500">
-                                                    📍 Demo Coordinates: {getDemoCoordinates(bookingDetails).latitude}, {getDemoCoordinates(bookingDetails).longitude}
-                                                </div>
-                                            )} */}
+                                         
                                         </div>
 
                                         {/* REAL MAP PREVIEW - OpenStreetMap */}
                                         <div className="relative rounded-xl overflow-hidden border border-gray-300">
-                                            <iframe
-                                                src={`https://www.openstreetmap.org/export/embed.html?bbox=${getDemoCoordinates(bookingDetails).longitude - 0.01},${getDemoCoordinates(bookingDetails).latitude - 0.01},${getDemoCoordinates(bookingDetails).longitude + 0.01},${getDemoCoordinates(bookingDetails).latitude + 0.01}&layer=mapnik&marker=${getDemoCoordinates(bookingDetails).latitude},${getDemoCoordinates(bookingDetails).longitude}`}
-                                                width="100%"
-                                                height="200"
-                                                style={{ border: 0 }}
-                                                allowFullScreen=""
-                                                loading="lazy"
-                                                referrerPolicy="no-referrer-when-downgrade"
-                                                title="Location Map"
-                                            ></iframe>
+                                            {bookingDetails.latitude && bookingDetails.longitude ? (
+                                                <iframe
+                                                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${bookingDetails.longitude - 0.01},${bookingDetails.latitude - 0.01},${bookingDetails.longitude + 0.01},${bookingDetails.latitude + 0.01}&layer=mapnik&marker=${bookingDetails.latitude},${bookingDetails.longitude}`}
+                                                    width="100%"
+                                                    height="200"
+                                                    style={{ border: 0 }}
+                                                    allowFullScreen=""
+                                                    loading="lazy"
+                                                    referrerPolicy="no-referrer-when-downgrade"
+                                                    title="Location Map"
+                                                ></iframe>
+                                            ) : (
+                                                <div className="h-48 bg-gray-100 flex items-center justify-center">
+                                                    <p className="text-gray-500">No coordinates available for map</p>
+                                                </div>
+                                            )}
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
-                                            {/* <div className="absolute bottom-4 left-4 bg-black/80 text-white px-4 py-3 rounded-xl">
-                                                <div className="text-sm font-medium">📍 Live Map View</div>
-                                                <div className="text-xs opacity-90 mt-1">Click "Open Map" for Google Maps</div>
-                                            </div> */}
-                                            {/* <div className="absolute top-4 right-4">
-                                                <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                                                    {demoMode ? 'Demo Mode' : 'Live Map'}
-                                                </span>
-                                            </div> */}
+                                        
                                         </div>
                                     </div>
                                 </div>
@@ -1197,442 +1184,3 @@ const AdminBooking = () => {
 };
 
 export default AdminBooking;
-
-
-
-
-
-
-
-
-
-// old design
-// import { useQuery, useQueryClient } from "@tanstack/react-query";
-// import { useState } from "react";
-// import { FaCalendarAlt } from "react-icons/fa";
-// import { RiEditBoxLine, RiDeleteBin5Line } from "react-icons/ri";
-// import { BiDetail } from "react-icons/bi";
-
-// const AdminBooking = () => {
-//     const queryClient = useQueryClient();
-//     const [selectedBooking, setSelectedBooking] = useState(null);
-//     const [bookingDetails, setBookingDetails] = useState(null);
-
-//     // Fetch Bookings
-//     const { data: booking = [], isLoading } = useQuery({
-//         queryKey: ["bookingAdmin"],
-//         queryFn: async () => {
-//             const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/booking`);
-//             const bookingRes = await res.json();
-//             return bookingRes.Data;
-//         },
-//     });
-
-//     const handleUpdateBooking = async () => {
-//         if (!selectedBooking) return;
-
-//         try {
-//             const res = await fetch(
-//                 `${import.meta.env.VITE_BACKEND_API_URL}/booking/update/${selectedBooking.id}`,
-//                 {
-//                     method: "PATCH",
-//                     headers: { "Content-Type": "application/json" },
-//                     body: JSON.stringify({
-//                         status: selectedBooking.status,
-//                         address: selectedBooking.address,
-//                         date: selectedBooking.date,
-//                         time: selectedBooking.time,
-//                         totalPay: selectedBooking.totalPay
-//                     }),
-//                 }
-//             );
-
-//             const data = await res.json();
-//             if (data.success) {
-//                 alert("Booking updated successfully!");
-//                 queryClient.invalidateQueries(["bookingAdmin"]);
-//                 setSelectedBooking(null);
-//             } else {
-//                 alert("Failed to update booking");
-//             }
-//         } catch (error) {
-//             console.error("Update error:", error);
-//             alert("Something went wrong!");
-//         }
-//     };
-
-//     const handleDeleteBooking = async (bookingId) => {
-//         if (!window.confirm("Are you sure you want to delete this booking?")) {
-//             return;
-//         }
-//         try {
-//             const res = await fetch(
-//                 `${import.meta.env.VITE_BACKEND_API_URL}/booking/delete/${bookingId}`,
-//                 {
-//                     method: "DELETE",
-//                 }
-//             );
-
-//             const data = await res.json();
-//             if (data.success) {
-//                 alert("Booking deleted successfully!");
-//                 queryClient.invalidateQueries(["bookingAdmin"]);
-//             } else {
-//                 alert("Failed to delete booking");
-//             }
-//         } catch (error) {
-//             console.error("Delete error:", error);
-//             alert("Something went wrong!");
-//         }
-//     };
-
-//     // Handle Input Changes in Modal
-//     const handleInputChange = (e) => {
-//         const { name, value } = e.target;
-//         setSelectedBooking(prev => ({
-//             ...prev,
-//             [name]: value
-//         }));
-//     };
-
-//     if (isLoading) return <p className="text-center md:mt-10">Loading...</p>;
-//     return (
-//         <div className="border border-[#E5E7EB] px-2 md:px-6 py-4 rounded-lg bg-white w-full max-w-6xl mx-auto">
-//             <h2 className="flex items-center gap-2.5 text-xl font-semibold border-b border-[#E5E7EB] pb-3 text-[#5D4F52]">
-//                 <FaCalendarAlt className="text-[#01788E]" />Bookings: {booking.length}
-//             </h2>
-
-//             <div className="mt-10">
-//                 <div className="overflow-x-auto">
-//                     <table className="table">
-//                         <thead>
-//                             <tr>
-//                                 <th>No</th>
-//                                 <th>Service Name</th>
-//                                 <th>Date & Time</th>
-//                                 <th>Address</th>
-//                                 <th>Status</th>
-//                                 <th>Action</th>
-//                             </tr>
-//                         </thead>
-//                         <tbody>
-//                             {booking.map((book, idx) => (
-//                                 <tr
-//                                     className="hover:bg-gray-50 cursor-pointer"
-//                                     key={book.id}
-//                                     onClick={() => setBookingDetails(book)}
-//                                 >
-//                                     <th>{idx + 1}</th>
-//                                     {/* Service */}
-//                                     <td className="">
-//                                         <p className="font-medium">{book.serviceName}</p>
-//                                         <p className="text-xs font-semibold">Amount: {book.totalPay}</p>
-//                                     </td>
-
-//                                     {/* Date & Time */}
-//                                     <td>
-//                                         <p>{book.date}</p>
-//                                         <p>{book.time}</p>
-//                                     </td>
-
-//                                     {/* Address */}
-//                                     <td>{book.address}</td>
-
-//                                     {/* Status */}
-//                                     <td>
-//                                         <div className="badge badge-info p-3 text-white">
-//                                             {book.status}
-//                                         </div>
-//                                     </td>
-
-//                                     {/* Actions */}
-//                                     <td className="flex items-center gap-3 md:mt-4">
-//                                         {/* Details Button */}
-//                                         <button
-//                                             title="View Details"
-//                                             className="btn btn-ghost btn-xs"
-//                                             onClick={(e) => {
-//                                                 e.stopPropagation();
-//                                                 setBookingDetails(book);
-//                                             }}
-//                                         >
-//                                             <BiDetail className="text-xl text-blue-500" />
-//                                         </button>
-
-//                                         {/* Edit Button */}
-//                                         <button
-//                                             title="Edit"
-//                                             className="btn btn-ghost btn-xs"
-//                                             onClick={(e) => {
-//                                                 e.stopPropagation();
-//                                                 setSelectedBooking(book);
-//                                             }}
-//                                         >
-//                                             <RiEditBoxLine className="text-xl text-green-500" />
-//                                         </button>
-
-//                                         {/* Delete Button */}
-//                                         <button
-//                                             className="btn btn-ghost btn-xs"
-//                                             title="Delete"
-//                                             onClick={(e) => {
-//                                                 e.stopPropagation();
-//                                                 handleDeleteBooking(book.id);
-//                                             }}
-//                                         >
-//                                             <RiDeleteBin5Line className="text-xl text-red-500" />
-//                                         </button>
-//                                     </td>
-//                                 </tr>
-//                             ))}
-//                         </tbody>
-//                     </table>
-//                 </div>
-//             </div>
-
-//             {/* MODAL FOR EDITING */}
-//             {selectedBooking && (
-//                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-//                     <div className="bg-white rounded-lg w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col">
-
-//                         {/* Modal Header */}
-//                         <div className="flex justify-between items-center p-6 border-b shrink-0">
-//                             <h3 className="text-xl font-bold">Edit Booking</h3>
-//                             <button
-//                                 onClick={() => setSelectedBooking(null)}
-//                                 className="text-2xl hover:text-gray-600"
-//                             >
-//                                 &times;
-//                             </button>
-//                         </div>
-
-//                         {/* Modal Body (Scrollable) */}
-//                         <div className="p-6 space-y-4 overflow-y-auto flex-1">
-
-//                             {/* Status */}
-//                             <div>
-//                                 <label className="block text-sm font-medium mb-1">Status</label>
-//                                 <select
-//                                     name="status"
-//                                     value={selectedBooking.status || ""}
-//                                     onChange={handleInputChange}
-//                                     className="w-full p-2 border rounded"
-//                                 >
-//                                     <option value="Pending">Pending</option>
-//                                     <option value="Upcoming">Upcoming</option>
-//                                     <option value="Delivered">Delivered</option>
-//                                     <option value="Cancelled">Cancelled</option>
-//                                     <option value="Unpaid">Unpaid</option>
-//                                     <option value="OnHold">OnHold</option>
-//                                 </select>
-//                             </div>
-
-//                             {/* Address */}
-//                             <div>
-//                                 <label className="block text-sm font-medium mb-1">Address</label>
-//                                 <textarea
-//                                     name="address"
-//                                     value={selectedBooking.address || ""}
-//                                     onChange={handleInputChange}
-//                                     className="w-full p-2 border rounded"
-//                                     rows="3"
-//                                 />
-//                             </div>
-
-//                             {/* Date */}
-//                             <div>
-//                                 <label className="block text-sm font-medium mb-1">Date</label>
-//                                 <input
-//                                     type="date"
-//                                     name="date"
-//                                     value={selectedBooking.date || ""}
-//                                     onChange={handleInputChange}
-//                                     className="w-full p-2 border rounded"
-//                                 />
-//                             </div>
-
-//                             {/* Time */}
-//                             <div>
-//                                 <label className="block text-sm font-medium mb-1">Time</label>
-//                                 <input
-//                                     type="time"
-//                                     name="time"
-//                                     value={selectedBooking.time || ""}
-//                                     onChange={handleInputChange}
-//                                     className="w-full p-2 border rounded"
-//                                 />
-//                             </div>
-
-//                             {/* Amount */}
-//                             <div>
-//                                 <label className="block text-sm font-medium mb-1">Amount</label>
-//                                 <input
-//                                     type="number"
-//                                     name="totalPay"
-//                                     value={selectedBooking.totalPay || ""}
-//                                     onChange={handleInputChange}
-//                                     className="w-full p-2 border rounded"
-//                                     step="0.01"
-//                                 />
-//                             </div>
-//                         </div>
-
-//                         {/* Modal Footer */}
-//                         <div className="flex justify-end gap-3 p-6 border-t shrink-0">
-//                             <button
-//                                 className="px-4 py-2 border rounded hover:bg-gray-100"
-//                                 onClick={() => setSelectedBooking(null)}
-//                             >
-//                                 Cancel
-//                             </button>
-//                             <button
-//                                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-//                                 onClick={handleUpdateBooking}
-//                             >
-//                                 Update Booking
-//                             </button>
-//                         </div>
-//                     </div>
-//                 </div>
-//             )}
-
-//             {/* DETAILS MODAL */}
-//             {bookingDetails && (
-//                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-//                     <div className="bg-white rounded-lg w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col">
-
-//                         {/* Modal Header */}
-//                         <div className="flex justify-between items-center p-6 border-b shrink-0">
-//                             <h3 className="text-xl font-bold">Booking Details</h3>
-//                             <button
-//                                 onClick={() => setBookingDetails(null)}
-//                                 className="text-2xl hover:text-gray-600"
-//                             >
-//                                 &times;
-//                             </button>
-//                         </div>
-
-//                         {/* Modal Body (Scrollable) */}
-//                         <div className="p-6 space-y-4 overflow-y-auto flex-1">
-
-//                             <div className="grid grid-cols-2 gap-4">
-//                                 <div>
-//                                     <p className="text-sm text-gray-500">Booking ID</p>
-//                                     <p className="font-medium">{bookingDetails.id || "N/A"}</p>
-//                                 </div>
-
-//                                 {/* Status */}
-//                                 <div>
-//                                     <p className="text-sm text-gray-500">Status</p>
-//                                     <span
-//                                         className={`badge p-2 ${bookingDetails.status === 'Completed'
-//                                             ? 'badge-success'
-//                                             : bookingDetails.status === 'Ongoing'
-//                                                 ? 'badge-warning'
-//                                                 : bookingDetails.status === 'Cancelled'
-//                                                     ? 'badge-error'
-//                                                     : 'badge-info'
-//                                             } text-white`}
-//                                     >
-//                                         {bookingDetails.status}
-//                                     </span>
-//                                 </div>
-//                             </div>
-
-//                             {/* Service Details */}
-//                             <div className="border-t pt-4">
-//                                 <h4 className="font-bold text-lg mb-2">Service Details</h4>
-//                                 <div className="grid grid-cols-2 gap-4">
-//                                     <div>
-//                                         <p className="text-sm text-gray-500">Service Name</p>
-//                                         <p className="font-medium">{bookingDetails.serviceName}</p>
-//                                     </div>
-//                                     <div>
-//                                         <p className="text-sm text-gray-500">Amount</p>
-//                                         <p className="font-medium">${bookingDetails.totalPay}</p>
-//                                     </div>
-//                                 </div>
-//                             </div>
-
-//                             {/* Date & Time */}
-//                             <div className="border-t pt-4">
-//                                 <h4 className="font-bold text-lg mb-2">Schedule</h4>
-//                                 <div className="grid grid-cols-2 gap-4">
-//                                     <div>
-//                                         <p className="text-sm text-gray-500">Date</p>
-//                                         <p className="font-medium">{bookingDetails.date}</p>
-//                                     </div>
-//                                     <div>
-//                                         <p className="text-sm text-gray-500">Time</p>
-//                                         <p className="font-medium">{bookingDetails.time}</p>
-//                                     </div>
-//                                 </div>
-//                             </div>
-
-//                             {/* Address */}
-//                             <div className="border-t pt-4">
-//                                 <h4 className="font-bold text-lg mb-2">Address</h4>
-//                                 <p className="bg-gray-50 p-3 rounded">{bookingDetails.address}</p>
-//                             </div>
-
-//                             {/* Additional Information */}
-//                             {bookingDetails.additionalInfo && (
-//                                 <div className="border-t pt-4">
-//                                     <h4 className="font-bold text-lg mb-2">Additional Information</h4>
-//                                     <p className="bg-gray-50 p-3 rounded">
-//                                         {bookingDetails.additionalInfo}
-//                                     </p>
-//                                 </div>
-//                             )}
-
-//                             {/* Payment Information */}
-//                             <div className="border-t pt-4">
-//                                 <h4 className="font-bold text-lg mb-2">Payment</h4>
-//                                 <div className="grid grid-cols-2 gap-4">
-//                                     <div>
-//                                         <p className="text-sm text-gray-500">Payment Method</p>
-//                                         <p className="font-medium">
-//                                             {bookingDetails.paymentMethod || "Credit Card"}
-//                                         </p>
-//                                     </div>
-//                                     <div>
-//                                         <p className="text-sm text-gray-500">Payment Status</p>
-//                                         <span
-//                                             className={`badge p-2 ${bookingDetails.paymentStatus === 'Paid'
-//                                                 ? 'badge-success'
-//                                                 : 'badge-error'
-//                                                 } text-white`}
-//                                         >
-//                                             {bookingDetails.paymentStatus || "Pending"}
-//                                         </span>
-//                                     </div>
-//                                 </div>
-//                             </div>
-//                         </div>
-
-//                         {/* Modal Footer */}
-//                         <div className="flex justify-end gap-3 p-6 border-t shrink-0">
-//                             <button
-//                                 className="px-4 py-2 border rounded hover:bg-gray-100"
-//                                 onClick={() => setBookingDetails(null)}
-//                             >
-//                                 Close
-//                             </button>
-//                             <button
-//                                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-//                                 onClick={() => {
-//                                     setSelectedBooking(bookingDetails);
-//                                     setBookingDetails(null);
-//                                 }}
-//                             >
-//                                 Edit Booking
-//                             </button>
-//                         </div>
-//                     </div>
-//                 </div>
-//             )}
-//         </div>
-//     );
-// };
-
-// export default AdminBooking;

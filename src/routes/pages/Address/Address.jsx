@@ -6,12 +6,14 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { generateId } from "./Map/generateId";
 import dirhum from "../../../assets/icon/dirhum.png";
+import { useNavigate } from "react-router-dom";
 
 const Address = () => {
-    const { itemSummary, totalAfterDiscount, showInput, setShowInput, serviceTitle, setLiveAddress, setSaveAddress ,totalVatRate} = useSummary();
+    const { mapLatitude, mapLongitude, addressLocation, itemSummary, totalAfterDiscount, showInput, setShowInput, serviceTitle, setLiveAddress, setSaveAddress, totalVatRate } = useSummary();
     const [selectedType, setSelectedType] = useState("Apartment");
     const buttons = ["Apartment", "Villa", "Office", "Other"];
     const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
 
     const { register, handleSubmit, formState: { errors, isValid } } = useForm({
         mode: "onChange",
@@ -19,25 +21,43 @@ const Address = () => {
     });
 
 
-    const onSubmit = (data) => {
+const onSubmit = (data) => {
         const finalData = {
-            id: generateId(), // ✅ এখানে
+            id: generateId(),
             type: selectedType,
             ...data,
-            displayAddress: formatDisplayAddress(selectedType, data)
+            displayAddress: formatDisplayAddress(selectedType, data),
+            // Location data সংরক্ষণ
+            latitude: mapLatitude,
+            longitude: mapLongitude,
+            fullAddress: addressLocation,
+            timestamp: new Date().toISOString()
         };
+
+        // Context-এ সেট করুন
         setLiveAddress(finalData);
 
+        // Save address-এ যোগ করুন
         setSaveAddress(prev => {
-            const exists = prev.some(addr =>
-                addr.displayAddress === finalData.displayAddress
+            // ডুপ্লিকেট চেক
+            const isDuplicate = prev.some(addr =>
+                addr.latitude === finalData.latitude &&
+                addr.longitude === finalData.longitude
             );
-            return exists ? prev : [...prev, finalData];
+
+            return isDuplicate ? prev : [...prev, finalData];
         });
 
         return true;
     };
 
+    const handleNextClick = async () => {
+        const result = await handleSubmit(onSubmit)();
+        if (result !== false) {
+            navigate("/date-time"); // Add navigation here
+        }
+        return result;
+    };
 
 
 
@@ -57,12 +77,6 @@ const Address = () => {
                 return `${data.area || ''} - ${data.city || ''}`;
         }
     };
-
-    const handleNextClick = async () => {
-        const result = await handleSubmit(onSubmit)();
-        return result !== false;
-    };
-
 
     const handleTypeChange = (type) => {
         setSelectedType(type);

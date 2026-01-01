@@ -476,7 +476,7 @@ export default function BookingDetails() {
                 </div>
 
                 {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="  grid grid-cols-1 lg:grid-cols-3 gap-8 h-screen overflow-y-auto lg:h-auto lg:overflow-visible">
                     {/* Left Column - Booking Info */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Confirmation Card */}
@@ -999,14 +999,14 @@ export default function BookingDetails() {
                                         <span className="font-medium text-gray-700">Service Charges</span>
                                         <div className="flex items-center gap-2">
                                             <img src={dirhum} alt="Currency" className="w-5 h-5" />
-                                            <span className="text-lg font-semibold text-gray-900">{'load data to server'}</span>
+                                            <span className="text-lg font-semibold text-gray-900">{'load data from server'}</span>
                                         </div>
                                     </div>
                                     <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
                                         <span className="font-medium text-gray-700">Cash on Delivery Charges</span>
                                         <div className="flex items-center gap-2">
                                             <img src={dirhum} alt="Currency" className="w-5 h-5" />
-                                            <span className="text-lg font-semibold text-gray-900">{'load data to server'}</span>
+                                            <span className="text-lg font-semibold text-gray-900">{'load data from server'}</span>
                                         </div>
                                     </div>
                                     <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
