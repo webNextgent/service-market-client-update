@@ -19,8 +19,8 @@ import { SiProton } from "react-icons/si";
 import userProfile from '../assets/logo/logo.png'; // Add your user image here
 
 const UserDashboard = () => {
-    const user = false;
-    const admin = true;
+    const user = true;
+    const admin = false;
 
 
     const links = (
