@@ -999,14 +999,7 @@ export default function BookingDetails() {
                                         <span className="font-medium text-gray-700">Service Charges</span>
                                         <div className="flex items-center gap-2">
                                             <img src={dirhum} alt="Currency" className="w-5 h-5" />
-                                            <span className="text-lg font-semibold text-gray-900">{'load data from server'}</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
-                                        <span className="font-medium text-gray-700">Cash on Delivery Charges</span>
-                                        <div className="flex items-center gap-2">
-                                            <img src={dirhum} alt="Currency" className="w-5 h-5" />
-                                            <span className="text-lg font-semibold text-gray-900">{'load data from server'}</span>
+                                            <span className="text-lg font-semibold text-gray-900">{item?.Data?.serviceCharge}</span>
                                         </div>
                                     </div>
                                     <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
@@ -1026,8 +1019,7 @@ export default function BookingDetails() {
                                     <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
                                         <span className="font-medium text-gray-700">Sub Total</span>
                                         <div className="flex items-center gap-2">
-                                            <img src={dirhum} alt="Currency" className="w-5 h-5" />
-                                            <span className="text-lg font-semibold text-gray-900">{item?.Data?.subTotal}</span>
+                                            <span className="text-lg font-semibold text-gray-900">{item?.Data?.serviceCharge} + {item?.Data?.serviceFee} = <p className="flex items-center justify-center"><img src={dirhum} alt="Currency" className="w-5 h-5" /> {item?.Data?.subTotal}</p></span>
                                         </div>
                                     </div>
                                     <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
@@ -1035,6 +1027,13 @@ export default function BookingDetails() {
                                         <div className="flex items-center gap-2">
                                             <img src={dirhum} alt="Currency" className="w-5 h-5" />
                                             <span className="text-lg font-semibold text-gray-900">{item?.Data?.vat}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                                        <span className="font-medium text-gray-700">Cash on Delivery Charges</span>
+                                        <div className="flex items-center gap-2">
+                                            <img src={dirhum} alt="Currency" className="w-5 h-5" />
+                                            <span className="text-lg font-semibold text-gray-900">{item?.Data?.cashOnDelivery}</span>
                                         </div>
                                     </div>
                                     <div className="flex justify-between items-center p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border border-blue-200 mt-6">

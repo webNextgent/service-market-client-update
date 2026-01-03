@@ -6,10 +6,9 @@ import { MdKeyboardArrowRight } from "react-icons/md";
 import { PiMoneyWavy } from "react-icons/pi";
 import { IoBagRemoveSharp, IoLocation } from "react-icons/io5";
 import { FaCalendar } from "react-icons/fa";
-import dirhum from "../../../assets/icon/color_dirhum.png";
 import { SiTicktick } from "react-icons/si";
 import { useSummary } from "../../../provider/SummaryProvider";
-import dirhum1 from '../../../assets/icon/dirhum.png';
+import dirhum from '../../../assets/icon/dirhum.png';
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -106,6 +105,8 @@ export default function Confirmation() {
             propertyItemid: ides,
             serviceName: services[0]?.title || "",
             address: displayAddress,
+            serviceCharge: servicePrice,
+            cashOnDelivery: 5,
             offer: useDiscount.toString(),
             serviceFee: Number(serviceCharge) || 0,
             discount: Number(useDiscount),
@@ -226,7 +227,7 @@ export default function Confirmation() {
 
                                 <div className="flex items-center gap-2.5 text-[#ff7a00]">
                                     <div className="text-[15px] bg-[#FCDFD5] text-[#ED6329] px-3 py-1 rounded-lg font-semibold flex items-center gap-1">
-                                        <img className="h-4 w-4 filter invert sepia saturate-200 hue-rotate-20" src={dirhum} />
+                                        <img className="h-4 w-4 filter invert sepia saturate-200 hue-rotate-20 text-red-700" src={dirhum} />
                                         {useDiscount}% off
                                     </div>
                                     {/* <SiTicktick className="text-xl" /> */}
@@ -316,7 +317,7 @@ export default function Confirmation() {
                     <div className="flex justify-between">
                         <span className="font-medium">Service Charges</span>
                         <span className="font-medium flex items-center gap-1">
-                            <img className="h-3 w-3" src={dirhum1} />{servicePrice}
+                            <img className="h-3 w-3" src={dirhum} />{servicePrice}
                         </span>
                     </div>
 
@@ -324,35 +325,46 @@ export default function Confirmation() {
                         <div className="flex justify-between">
                             <span className="font-medium">Cash On Delivery Charge</span>
                             <span className="font-medium flex items-center gap-1">
-                                <img className="h-3 w-3" src={dirhum1} />5.00
+                                <img className="h-3 w-3" src={dirhum} />5.00
                             </span>
                         </div>
                     )}
 
                     <div className="flex justify-between">
-                        <span className="font-medium">Service Fee</span><span className="font-medium flex items-center gap-1"><img className="h-3 w-3" src={dirhum1} />{serviceCharge}</span>
+                        <span className="font-medium">Service Fee</span><span className="font-medium flex items-center gap-1"><img className="h-3 w-3" src={dirhum} />{serviceCharge}</span>
                     </div>
 
                     {/* <div className="flex justify-between font-semibold">
                         <span>Discount</span>
                         <span className="flex items-center gap-1">
-                            <img className="h-3 w-3" src={dirhum1} />30.00
+                            <img className="h-3 w-3" src={dirhum} />30.00
                         </span>
                     </div> */}
 
                     <div className="flex justify-between items-center">
                         <span className="font-medium">Sub Total</span>
                         <span className="font-medium flex items-center gap-1">
-                            <img className="h-3 w-3" src={dirhum1} /> {paymentMethod === "Cash" ? Number(subTotal) + 5 : subTotal}
+                            <img className="h-3 w-3" src={dirhum} /> {paymentMethod === "Cash" ? Number(subTotal) + 5 : subTotal}
                         </span>
                     </div>
 
                     <div className="flex justify-between items-center">
                         <span className="font-medium">VAT (5%)</span>
                         <span className="font-medium flex items-center gap-1">
-                            <img className="h-3 w-3" src={dirhum1} /> {vat.toFixed(2)}
+                            <img className="h-3 w-3" src={dirhum} /> {vat.toFixed(2)}
                         </span>
                     </div>
+
+                    {/*  DISCOUNT ROW */}
+                    {useDiscount > 0 && (
+                        <div className="flex justify-between items-center text-green-600">
+                            <span className="text-sm">Discount</span>
+                            <span className="flex items-center gap-1 font-medium text-sm">
+                                <img src={dirhum} className="w-3.5 h-3.5" alt="currency" />
+                                -{useDiscount.toFixed(2)}%
+                            </span>
+                        </div>
+                    )}
 
                     <hr className="my-3" />
 
@@ -360,7 +372,7 @@ export default function Confirmation() {
                     <div className="flex justify-between text-lg font-bold">
                         <span>Total to pay</span>
                         <span className="flex items-center gap-1">
-                            <img className="h-4 w-4 mt-[3px]" src={dirhum1} /> {paymentMethod === "Cash" ? Number(totalAfterDiscount.toFixed(2)) + 5 : totalAfterDiscount.toFixed(2)}
+                            <img className="h-4 w-4 mt-[3px]" src={dirhum} /> {paymentMethod === "Cash" ? Number(totalAfterDiscount.toFixed(2)) + 5 : totalAfterDiscount.toFixed(2)}
                         </span>
                     </div>
                 </div>

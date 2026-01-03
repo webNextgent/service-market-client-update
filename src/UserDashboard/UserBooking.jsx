@@ -18,6 +18,7 @@ export default function UserBooking() {
     { id: "Unpaid", label: "Unpaid", icon: <PiBookThin /> },
     { id: "Pending", label: "Pending", icon: <MdOutlineWatchLater /> },
     { id: "OnHold", label: "On Hold", icon: <MdOutlineWatchLater /> },
+    { id: "Completed", label: "Completed", icon: <MdOutlineWatchLater /> },
   ];
 
   // Fetch Data
@@ -56,7 +57,7 @@ export default function UserBooking() {
 
       <div className="mt-10 flex flex-col items-center">
         <nav
-          className=" hide-scroll-shadow  no-scrollbar  flex flex-nowrap  items-center  gap-3  w-full  overflow-x-auto  px-2 justify-start  md:justify-center
+          className="hide-scroll-shadow no-scrollbar  flex flex-nowrap  items-center  gap-3  w-full  overflow-x-auto  px-2 justify-start  md:justify-center overflow-scroll
           "
         >
           {tabs.map((tab) => (
