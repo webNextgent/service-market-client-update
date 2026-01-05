@@ -20,7 +20,10 @@ const AddPromoCode = () => {
     const fetchPromoCodes = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch('https://job-task-nu.vercel.app/api/v1/promo-code');
+            const response = await fetch(
+                `${import.meta.env.VITE_BACKEND_API_URL}/promo-code`
+            );
+
             const data = await response.json();
 
             if (data.success) {
@@ -68,7 +71,7 @@ const AddPromoCode = () => {
         };
 
         try {
-            const response = await fetch('https://job-task-nu.vercel.app/api/v1/promo-code/create', {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/promo-code/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -104,7 +107,7 @@ const AddPromoCode = () => {
         }
 
         try {
-            const response = await fetch(`https://job-task-nu.vercel.app/api/v1/promo-code/delete/${promo.id}`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/promo-code/delete/${promo.id}`, {
                 method: 'DELETE',
             });
 
@@ -141,7 +144,7 @@ const AddPromoCode = () => {
         }
 
         try {
-            const response = await fetch(`https://job-task-nu.vercel.app/api/v1/promo-code/${editingId}`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/promo-code/${editingId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

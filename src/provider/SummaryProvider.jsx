@@ -35,7 +35,7 @@ export const SummaryProvider = ({ children }) => {
         try {
             const parsed = JSON.parse(stored);
             return Array.isArray(parsed) ? parsed : [];
-        // eslint-disable-next-line no-unused-vars
+            // eslint-disable-next-line no-unused-vars
         } catch (err) {
             console.error("Invalid saveAddress in localStorage:", stored);
             localStorage.removeItem("saveAddress");
@@ -46,7 +46,7 @@ export const SummaryProvider = ({ children }) => {
     // for promo code
     const handleApply = async (promoCode) => {
         try {
-            const res = await fetch('https://job-task-nu.vercel.app/api/v1/promo-code/use-promo-code/6947c2d395c2c51a68b5414f', {
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/promo-code/use-promo-code/6947c2d395c2c51a68b5414f`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ code: promoCode }),
@@ -76,20 +76,20 @@ export const SummaryProvider = ({ children }) => {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
-        
+
         setSaveAddress(prev => {
             const updated = [...prev, addressWithId];
             localStorage.setItem("saveAddress", JSON.stringify(updated));
             return updated;
         });
-        
+
         return addressWithId;
     };
 
     const updateAddress = (updatedAddress) => {
         setSaveAddress(prev => {
-            const updated = prev.map(addr => 
-                addr.id === updatedAddress.id 
+            const updated = prev.map(addr =>
+                addr.id === updatedAddress.id
                     ? { ...updatedAddress, updatedAt: new Date().toISOString() }
                     : addr
             );
@@ -149,7 +149,7 @@ export const SummaryProvider = ({ children }) => {
             queryKey: ["item-summary", id],
             queryFn: async () => {
                 const res = await fetch(
-                    `https://job-task-nu.vercel.app/api/v1/property-items/${id}`
+                    `${import.meta.env.VITE_BACKEND_API_URL}/property-items/${id}`
                 );
                 const json = await res.json();
                 return json?.Data;
@@ -442,7 +442,7 @@ export const useSummary = () => useContext(SummaryContext);
 //         0
 //     );
 
-//     // subtotal calculations 
+//     // subtotal calculations
 //     const subTotal = itemSummaryWithTotal.reduce(
 //         (acc, item) => acc + item.subTotal,
 //         0
@@ -472,7 +472,7 @@ export const useSummary = () => useContext(SummaryContext);
 
 
 //     const summaryInfo = {
-//         // service related functionality 
+//         // service related functionality
 //         servicePrice,
 //         subTotal,
 //         vat,
@@ -480,7 +480,7 @@ export const useSummary = () => useContext(SummaryContext);
 //         totalToPay,
 //         totalAfterDiscount,
 
-//         // promo related 
+//         // promo related
 //         useDiscount,
 //         setUseDiscount,
 //         promo,
@@ -489,7 +489,7 @@ export const useSummary = () => useContext(SummaryContext);
 //         setPromoStatus,
 //         handleApply,
 
-//         // item date 
+//         // item date
 //         itemSummary: itemSummaryWithTotal,
 //         serviceTitle,
 

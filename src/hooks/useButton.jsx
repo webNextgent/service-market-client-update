@@ -4,7 +4,7 @@ const useButton = () => {
     const { data: button = [], isLoading: loadingButton, error, refetch } = useQuery({
         queryKey: ["all-button"],
         queryFn: async () => {
-            const res = await fetch("https://job-task-nu.vercel.app/api/v1/service-type");
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/service-type`);
             const data = await res.json();
             return data.Data;
         }

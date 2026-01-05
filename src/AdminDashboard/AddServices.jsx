@@ -40,7 +40,7 @@ const AddServices = () => {
                     image: imageUrl,
                 };
 
-                const postData = await fetch("https://job-task-nu.vercel.app/api/v1/service/create", {
+                const postData = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/service/create`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(finalData),
@@ -58,7 +58,7 @@ const AddServices = () => {
         } catch (error) {
             toast.error(`Something wrong: ${error?.message || error}`);
             // console.log(error);
-            
+
         } finally {
             setLoading(false);
             reset();
@@ -68,7 +68,7 @@ const AddServices = () => {
     const handelDelete = async (service) => {
         try {
             const res = await fetch(
-                `https://job-task-nu.vercel.app/api/v1/service/delete/${service.id}`,
+                `${import.meta.env.VITE_BACKEND_API_URL}/service/delete/${service.id}`,
                 {
                     method: "DELETE",
                 }

@@ -46,7 +46,7 @@ const EditModal = ({ service, onClose }) => {
             };
 
             const updateRes = await fetch(
-                `https://job-task-nu.vercel.app/api/v1/service/update/${service.id}`,
+                `${import.meta.env.VITE_BACKEND_API_URL}/service/update/${service.id}`,
                 {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },

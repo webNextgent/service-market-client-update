@@ -5,7 +5,7 @@ const useDashboardPropertyType = () => {
     const { data: propertyType = [], refetch, isLoading } = useQuery({
         queryKey: ['propertyType'],
         queryFn: async () => {
-            const res = await fetch("https://job-task-nu.vercel.app/api/v1/property-type");
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/property-type`);
             const data = await res.json();
             return data.Data;
         }

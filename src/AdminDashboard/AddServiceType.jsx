@@ -37,7 +37,7 @@ export default function AddServiceType() {
 
       const finalData = { ...data, image: result.data.url };
 
-      const postData = await fetch("https://job-task-nu.vercel.app/api/v1/service-type/create", {
+      const postData = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/service-type/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(finalData),
@@ -84,7 +84,7 @@ export default function AddServiceType() {
       const updatedData = { ...data, image: imageUrl };
 
       const updateRes = await fetch(
-        `https://job-task-nu.vercel.app/api/v1/service-type/update/${selectedValue.id}`,
+        `${import.meta.env.VITE_BACKEND_API_URL}/service-type/update/${selectedValue.id}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -112,7 +112,7 @@ export default function AddServiceType() {
   const handelDeleteServiceType = async (service) => {
     try {
       const res = await fetch(
-        `https://job-task-nu.vercel.app/api/v1/service-type/delete/${service.id}`,
+        `${import.meta.env.VITE_BACKEND_API_URL}/service-type/delete/${service.id}`,
         {
           method: "DELETE",
         }
