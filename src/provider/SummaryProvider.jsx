@@ -107,7 +107,7 @@ export const SummaryProvider = ({ children }) => {
     };
 
     const getAddresses = () => {
-        return [...saveAddress]; // Return a copy
+        return [...saveAddress];
     };
 
     const getAddressById = (id) => {
@@ -289,9 +289,6 @@ export const SummaryProvider = ({ children }) => {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useSummary = () => useContext(SummaryContext);
-
-
-
 
 
 

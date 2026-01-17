@@ -2,12 +2,14 @@ import { Link } from "react-router-dom";
 import logo from "../../../../assets/logo/logo.png";
 import { useState, useRef, useEffect } from "react";
 import LoginModal from "../../../../components/LoginModal/LoginModal";
+import useAuth from "../../../../hooks/useAuth";
 
 const Navbar = () => {
-    const user = true;
+    const { user, logOut } = useAuth();
     const [openModal, setOpenModal] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -65,7 +67,7 @@ const Navbar = () => {
                                 onClick={toggleDropdown}
                                 className="btn bg-white text-gray-500 border-0 shadow-xs"
                             >
-                                Rakib
+                                {user?.displayName || 'User'}
                             </button>
 
                             {/* Dropdown Menu */}
@@ -97,8 +99,8 @@ const Navbar = () => {
 
                                 <button
                                     className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 text-[#01788E]"
-                                    onClick={() => {
-                                        // Handle logout
+                                    onClick={async () => {
+                                        await logOut();
                                         setDropdownOpen(false);
                                     }}
                                 >
@@ -107,9 +109,18 @@ const Navbar = () => {
                             </div>
                         </div>
                     ) : (
-                        <button onClick={() => setOpenModal(true)} className="btn bg-white text-[#5D4F52] border-0 shadow-xs font-bold">
-                            Login
-                        </button>
+                        <div className="flex items-center gap-2.5">
+                            <Link to='/login'
+                                // onClick={() => setOpenModal(true)}
+                                className="btn bg-white text-[#5D4F52] border-0 shadow-xs font-bold">
+                                Login
+                            </Link>
+                            <Link to='/register'
+                                // onClick={() => setOpenModal(true)}
+                                className="btn bg-white text-[#5D4F52] border-0 shadow-xs font-bold">
+                               Register
+                            </Link>
+                        </div>
                     )}
                 </div>
             </div>
