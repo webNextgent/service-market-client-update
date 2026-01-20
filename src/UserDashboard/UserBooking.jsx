@@ -5,11 +5,14 @@ import { SlHandbag } from "react-icons/sl";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import BookingCard from "../components/BookingCard/BookingCard";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 export default function UserBooking() {
   const [activeTab, setActiveTab] = useState("Upcoming");
   const [filteredData, setFilteredData] = useState([]);
   const [tabLoading, setTabLoading] = useState(false);
+  const axiosSecure = useAxiosSecure();
+
 
   const tabs = [
     { id: "Upcoming", label: "Upcoming", icon: <MdOutlineWatchLater /> },
@@ -25,7 +28,8 @@ export default function UserBooking() {
   const { data: booking = {}, isLoading } = useQuery({
     queryKey: ["bookingUser"],
     queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/booking`);
+      // const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/booking`);
+      const res = await axiosSecure.get("/booking");
       return res.json();
     },
   });

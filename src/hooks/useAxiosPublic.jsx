@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosPublic = axios.create({
-    baseURL: 'https://zestora-restaurant-server.vercel.app'
+    baseURL: `${import.meta.env.VITE_BACKEND_API_URL}`
 })
 
 const useAxiosPublic = () => {

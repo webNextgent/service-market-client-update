@@ -13,7 +13,7 @@ const DateTime = () => {
     const [selectedTime, setSelectedTime] = useState(null);
     const scrollerRef = useRef(null);
     const [open, setOpen] = useState(false);
-    const { itemSummary, totalAfterDiscount, serviceTitle, showInput, setShowInput, setDate, setTime, liveAddress,totalVatRate } = useSummary();
+    const { itemSummary, totalAfterDiscount, serviceTitle, showInput, setShowInput, setDate, setTime, liveAddress, totalVatRate } = useSummary();
 
     const { data: dateTime, isLoading } = useQuery({
         queryKey: ['date-time-user'],
@@ -326,7 +326,7 @@ const DateTime = () => {
                             <div className="flex items-center gap-1.5 justify-center">
                                 <img src={dirhum} className="w-3.5 h-3.5" alt="" />
                                 <span className="text-base font-bold text-gray-900">
-                                    {totalAfterDiscount}
+                                    {totalAfterDiscount.toFixed(2)}
                                 </span>
                                 <span className="text-gray-400 text-sm">›</span>
                             </div>

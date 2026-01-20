@@ -1,6 +1,6 @@
-import { FaCalendarAlt } from "react-icons/fa";
+import { FaCalendarAlt, FaUsers } from "react-icons/fa";
 import { MdDeleteSweep, MdMenu } from "react-icons/md";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import logo from '../assets/logo/logo.png';
 import { FaUser } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
@@ -13,20 +13,24 @@ import { SiServerless } from "react-icons/si";
 import { LuProportions } from "react-icons/lu";
 import { IoMdTime } from "react-icons/io";
 import { SiProton } from "react-icons/si";
-
-
-// Sample user image - replace with your actual image import
-import userProfile from '../assets/logo/logo.png'; // Add your user image here
+import userProfile from '../assets/logo/logo.png';
+import useAuth from "../hooks/useAuth";
 
 const UserDashboard = () => {
-    const user = false;
-    const admin = true;
+    const { user, logOut } = useAuth();
+    const router = useNavigate();
+
+
+    const handleLogout = () => {
+        logOut();
+        router("/");
+    }
 
 
     const links = (
         <>
             {/* just user  */}
-            {user && !admin && (
+            {user && user?.role !== 'ADMIN' && (
                 <ul>
                     {/* My Bookings */}
                     <li className="list-none border-y border-dashed hover:bg-gray-50">
@@ -141,14 +145,14 @@ const UserDashboard = () => {
                     </li>
 
                     {/* Logout */}
-                    <li className="list-none flex items-center gap-1.5 py-3 px-3 hover:underline cursor-pointer text-[#157D91]">
+                    <li onClick={() => handleLogout()} className="list-none flex items-center gap-1.5 py-3 px-3 hover:underline cursor-pointer text-[#157D91]">
                         <RiLogoutCircleLine />  Logout
                     </li>
                 </ul>
             )}
 
             {/* just admin  */}
-            {admin && !user && (
+            {user && user?.role === 'ADMIN' && (
                 <ul>
                     <li className="list-none border-y border-dashed hover:bg-gray-50">
                         <NavLink
@@ -202,6 +206,17 @@ const UserDashboard = () => {
                         ${isActive ? "font-extrabold" : ""}`
                             }>
                             <FaCalendarAlt /> Property Item
+                        </NavLink>
+                    </li>
+
+                    <li className="list-none border-b border-dashed hover:bg-gray-50">
+                        <NavLink
+                            to="/dashboard/user-management"
+                            className={({ isActive }) =>
+                                `text-[14px] font-medium flex items-center gap-2 text-[#157D91] px-3 py-2 transition 
+                        ${isActive ? "font-extrabold" : ""}`
+                            }>
+                            <FaUsers /> User Management
                         </NavLink>
                     </li>
 
@@ -300,9 +315,9 @@ const UserDashboard = () => {
 
                             {/* User Details */}
                             <div className="flex-1 text-center">
-                                <h2 className="text-lg font-bold text-gray-800">Rakib</h2>
-                                <p className="text-sm font-medium text-[#01788E] mt-1">Admin</p>
-                                <p className="text-xs text-gray-500 mt-0.5">Al Bada'a, Dubai</p>
+                                {/* <h2 className="text-lg font-bold text-gray-800">Rakib</h2> */}
+                                <p className="text-sm font-medium text-[#01788E] mt-1">{user?.role}</p>
+                                {/* <p className="text-xs text-gray-500 mt-0.5">Al Bada'a, Dubai</p> */}
 
                                 {/* Optional: Wallet Balance */}
                                 {/* <div className="flex items-center gap-1 mt-2">

@@ -19,7 +19,7 @@ export default function LocationPicker() {
         libraries: ["places"],
     });
 
-    const { itemSummary, totalAfterDiscount, showInput, setShowInput, address, serviceTitle, setMapLongitude, setMapLatitude,setAddressLocation, liveAddress, saveAddress, setLiveAddress, totalVatRate, mapLongitude, mapLatitude } = useSummary();
+    const { itemSummary, totalAfterDiscount, showInput, setShowInput, address, serviceTitle, setMapLongitude, setMapLatitude, setAddressLocation, liveAddress, saveAddress, setLiveAddress, totalVatRate, mapLongitude, mapLatitude } = useSummary();
 
     const [selectedAddressId, setSelectedAddressId] = useState(
         liveAddress?.id || null
@@ -320,7 +320,7 @@ export default function LocationPicker() {
                             <div className="flex items-center gap-1.5 justify-center">
                                 <img src={dirhum} className="w-3.5 h-3.5" alt="" />
                                 <span className="text-base font-bold text-gray-900">
-                                    {totalAfterDiscount}
+                                    {totalAfterDiscount.toFixed(2)}
                                 </span>
                                 <span className="text-gray-400 text-sm">›</span>
                             </div>

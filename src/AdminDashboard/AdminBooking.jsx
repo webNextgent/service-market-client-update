@@ -18,6 +18,7 @@ const AdminBooking = () => {
     const [demoMode,] = useState(true);
     const shareRef = useRef(null);
 
+
     // Fetch Bookings
     const { data: bookings = [], isLoading, error } = useQuery({
         queryKey: ["bookingAdmin"],
@@ -177,7 +178,7 @@ const AdminBooking = () => {
     // Get REAL coordinates from booking data
     const getCoordinates = useCallback((booking) => {
         if (!booking) return { latitude: 23.8103, longitude: 90.4125 };
-        
+
         // Priority 1: Use real coordinates from booking
         if (booking.latitude && booking.longitude) {
             return {
@@ -185,7 +186,7 @@ const AdminBooking = () => {
                 longitude: Number(booking.longitude)
             };
         }
-        
+
         // Priority 2: Generate coordinates based on booking ID (fallback)
         let idNum;
         if (booking.id) {
@@ -194,24 +195,15 @@ const AdminBooking = () => {
         } else {
             idNum = Math.floor(Math.random() * 1000);
         }
-        
+
         const lat = 23.8103 + (idNum % 100) * 0.01;
         const lng = 90.4125 + (idNum % 100) * 0.01;
-        
+
         return {
             latitude: Number(lat.toFixed(6)),
             longitude: Number(lng.toFixed(6))
         };
     }, []);
-
-    // Get Map Image URL - Using OpenStreetMap (No API Key Required)
-    // const getMapImageUrl = useCallback((booking) => {
-    //     // Get coordinates
-    //     const coords = getCoordinates(booking);
-        
-    //     // Use OpenStreetMap static map
-    //     return `https://staticmap.openstreetmap.de/staticmap.php?center=${coords.latitude},${coords.longitude}&zoom=14&size=600x300&maptype=mapnik&markers=${coords.latitude},${coords.longitude},red-pushpin`;
-    // }, [getCoordinates]);
 
     // WhatsApp/share-friendly version with better formatting
     const generateShareText = (booking) => {
@@ -859,7 +851,7 @@ const AdminBooking = () => {
                                         />
                                     </div>
                                 </div>
-                            </div>  
+                            </div>
 
                             {/* Address with Map Preview */}
                             <div>
@@ -1072,7 +1064,7 @@ const AdminBooking = () => {
 
                                         <div className="p-5 bg-gray-50 rounded-xl border border-gray-200 mb-4">
                                             <p className="text-gray-700 whitespace-pre-wrap">{bookingDetails.address}</p>
-                                         
+
                                         </div>
 
                                         {/* REAL MAP PREVIEW - OpenStreetMap */}
@@ -1094,7 +1086,7 @@ const AdminBooking = () => {
                                                 </div>
                                             )}
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
-                                        
+
                                         </div>
                                     </div>
                                 </div>

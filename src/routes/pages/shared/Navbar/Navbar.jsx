@@ -5,11 +5,12 @@ import LoginModal from "../../../../components/LoginModal/LoginModal";
 import useAuth from "../../../../hooks/useAuth";
 
 const Navbar = () => {
-    const { user, logOut } = useAuth();
     const [openModal, setOpenModal] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
 
+    const { user, logOut } = useAuth();
+    console.log(user);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -61,13 +62,12 @@ const Navbar = () => {
 
                 <div className="navbar-end mr-4 md:w-[100px]" ref={dropdownRef}>
                     {user ? (
-                        // ✅ group class add করা হয়েছে
                         <div className="relative group">
                             <button
                                 onClick={toggleDropdown}
-                                className="btn bg-white text-gray-500 border-0 shadow-xs"
+                                className="btn bg-white text-gray-500 border shadow-xs"
                             >
-                                {user?.displayName || 'User'}
+                                {user?.role}
                             </button>
 
                             {/* Dropdown Menu */}
@@ -82,19 +82,11 @@ const Navbar = () => {
                                 z-50
                             `}>
                                 <Link
-                                    to="/dashboard/admin-booking"
+                                    to={user?.role === 'ADMIN' ? "/dashboard/admin-booking" : "/dashboard/booking"}
                                     className="block px-4 py-2 rounded-lg hover:bg-gray-100 text-[#01788E]"
                                     onClick={() => setDropdownOpen(false)}
                                 >
-                                    My Booking
-                                </Link>
-
-                                <Link
-                                    to="/dashboard/profile"
-                                    className="block px-4 py-2 rounded-lg hover:bg-gray-100 text-[#01788E]"
-                                    onClick={() => setDropdownOpen(false)}
-                                >
-                                    My Profile
+                                    Dashboard
                                 </Link>
 
                                 <button
@@ -110,15 +102,11 @@ const Navbar = () => {
                         </div>
                     ) : (
                         <div className="flex items-center gap-2.5">
-                            <Link to='/login'
-                                // onClick={() => setOpenModal(true)}
-                                className="btn bg-white text-[#5D4F52] border-0 shadow-xs font-bold">
+                            <Link
+                                // to='/login'
+                                onClick={() => setOpenModal(true)}
+                                className="btn bg-white text-[#5D4F52] border shadow-xs font-bold">
                                 Login
-                            </Link>
-                            <Link to='/register'
-                                // onClick={() => setOpenModal(true)}
-                                className="btn bg-white text-[#5D4F52] border-0 shadow-xs font-bold">
-                               Register
                             </Link>
                         </div>
                     )}

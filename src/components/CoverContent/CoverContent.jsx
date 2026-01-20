@@ -18,13 +18,13 @@ const CoverContent = ({ content }) => {
 
     return (
         <div className="mt-3 md:mt-6">
-            {properties.map((property, idx) => (
+            {properties?.map((property, idx) => (
                 <div
                     key={idx}
                     onClick={() => handleOpenModal(property)}
                     className="group cursor-pointer transition-all duration-200 mb-4 md:mb-5 p-3 md:p-4 rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm bg-white"
                 >
-                    <div className="md:flex md:items-start md:gap-4 lg:gap-5">
+                    <div className="flex items-start gap-4 lg:gap-5">
                         {/* Image - Professional Compact */}
                         <div className="relative mb-3 md:mb-0 md:flex-shrink-0">
                             <div className="relative overflow-hidden rounded-lg bg-gray-100">

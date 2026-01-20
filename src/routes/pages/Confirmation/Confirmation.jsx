@@ -11,6 +11,7 @@ import { useSummary } from "../../../provider/SummaryProvider";
 import dirhum from '../../../assets/icon/dirhum.png';
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import useAuth from "../../../hooks/useAuth";
 
 
 export default function Confirmation() {
@@ -21,6 +22,7 @@ export default function Confirmation() {
     const [paymentMethod, setPaymentMethod] = useState("");
     const navigate = useNavigate();
     const ides = itemSummary.map(p => p.id);
+    const { user } = useAuth();
 
     // const REQUIRED_FIELDS = [
     //     "propertyItemIds",
@@ -102,7 +104,7 @@ export default function Confirmation() {
         const mappedPaymentMethod = paymentMethod === "Cash" ? "CashOnDelivery" : "Card";
 
         const payload = {
-            propertyItemid: ides,
+            propertyItemIds: ides,
             serviceName: services[0]?.title || "",
             address: displayAddress,
             serviceCharge: servicePrice,
@@ -117,7 +119,8 @@ export default function Confirmation() {
             time: time || "",
             paymentMethod: mappedPaymentMethod,
             longitude: parsedLongitude,
-            latitude: parsedLatitude
+            latitude: parsedLatitude,
+            userId: user?.id
         };
         console.log(payload);
         // const validation = isPayloadValid(payload);
