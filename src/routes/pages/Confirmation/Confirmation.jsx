@@ -123,22 +123,6 @@ export default function Confirmation() {
             userId: user?.id
         };
         console.log(payload);
-        // const validation = isPayloadValid(payload);
-        // if (!validation.isValid) {
-        //     const fieldName = validation.missingField === "propertyItemid" ? "Service Items" :
-        //         validation.missingField === "serviceName" ? "Service Name" :
-        //             validation.missingField === "address" ? "Address" :
-        //                 validation.missingField === "serviceFee" ? "Service Fee" :
-        //                     validation.missingField === "subTotal" ? "Sub Total" :
-        //                         validation.missingField === "vat" ? "VAT" :
-        //                             validation.missingField === "totalPay" ? "Total Pay" :
-        //                                 validation.missingField === "date" ? "Date" :
-        //                                     validation.missingField === "time" ? "Time" :
-        //                                         validation.missingField === "paymentMethod" ? "Payment Method" : "Required field";
-
-        //     toast.error(`Please complete: ${fieldName}`);
-        //     return false;
-        // }
 
         try {
             const response = await fetch(

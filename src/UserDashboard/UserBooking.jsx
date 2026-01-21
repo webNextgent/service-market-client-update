@@ -30,7 +30,8 @@ export default function UserBooking() {
     queryFn: async () => {
       // const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/booking`);
       const res = await axiosSecure.get("/booking");
-      return res.json();
+      console.log(res);
+      return res.data;
     },
   });
   console.log(booking);

@@ -10,7 +10,6 @@ const Navbar = () => {
     const dropdownRef = useRef(null);
 
     const { user, logOut } = useAuth();
-    console.log(user);
 
     // Close dropdown when clicking outside
     useEffect(() => {

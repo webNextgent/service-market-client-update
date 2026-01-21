@@ -22,6 +22,7 @@ import AdminDateTime from "../AdminDashboard/AdminDateTime";
 import LocationPicker from "./pages/LocationPicker/LocationPicker";
 import { createBrowserRouter } from "react-router-dom";
 import AddPromoCode from "../AdminDashboard/AddPromoCode";
+import LoginModal from "../components/LoginModal/LoginModal";
 
 export const router = createBrowserRouter([
     {
@@ -40,7 +41,7 @@ export const router = createBrowserRouter([
                 element: <BookingDetails></BookingDetails>,
                 loader: ({ params }) => fetch(`${import.meta.env.VITE_BACKEND_API_URL}/booking/${params.id}`)
             },
-            // { path: 'login', element: <LoginForm /> },
+            { path: '/login', element: <LoginModal /> },
             // { path: 'register', element: <RegisterForm /> }
         ]
     },

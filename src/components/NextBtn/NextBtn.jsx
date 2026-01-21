@@ -1,14 +1,23 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { steps } from "./FlowSteps";
+import useAuth from "../../hooks/useAuth";
+import toast from "react-hot-toast";
+import LoginModal from "../LoginModal/LoginModal";
 
 const NextBtn = ({ name = "Next", disabled, onClick }) => {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const { pathname } = useLocation();
     const currentIndex = steps.indexOf(pathname);
     let nextPath = steps[currentIndex + 1];
     let isDisabled = disabled ?? false;
 
     const handleClick = async () => {
+        if (user === null) {
+            toast.error('Please login first');
+            return;
+        }
+
         let shouldNavigate = true;
         if (onClick) {
             try {

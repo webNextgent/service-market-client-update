@@ -1,5 +1,6 @@
 import axios from "axios";
 import useAuth from "./useAuth";
+import { useEffect } from "react";
 
 
 const axiosSecure = axios.create({
@@ -9,23 +10,38 @@ const axiosSecure = axios.create({
 const useAxiosSecure = () => {
     const { logOut } = useAuth();
 
-    axiosSecure.interceptors.request.use(function (config) {
-        const token = localStorage.getItem('access-token');
-        config.headers.authorization = `${token}`;
-        return config;
-    }, function (err) {
-        return Promise.reject(err);
-    })
+    useEffect(() => {
+        const requestInterceptor = axiosSecure.interceptors.request.use(
+            config => {
+                const token = localStorage.getItem("access-token");
+                console.log(token);
+                if (token) {
+                    config.headers.authorization = `${token}`;
+                }
+                return config;
+            },
+            error => Promise.reject(error)
+        );
 
-    axiosSecure.interceptors.response.use(function (res) {
-        return res;
-    }, async err => {
-        const status = err.response.status;
-        if (status === 401 || status === 403) {
-            await logOut();
-        }
-    })
+        const responseInterceptor = axiosSecure.interceptors.response.use(
+            res => res,
+            async error => {
+                const status = error.response?.status;
+                if (status === 401 || status === 403) {
+                    // await logOut();
+                }
+                return Promise.reject(error);
+            }
+        );
+
+        return () => {
+            axiosSecure.interceptors.request.eject(requestInterceptor);
+            axiosSecure.interceptors.response.eject(responseInterceptor);
+        };
+    }, [logOut]);
+
     return axiosSecure;
 };
+
 
 export default useAxiosSecure;
