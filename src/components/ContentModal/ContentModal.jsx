@@ -77,7 +77,7 @@ const ContentModal = ({ setShowModal, property }) => {
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header */}
-                    <div className="sticky top-0 bg-white z-20 border-b border-gray-100 rounded-t-xl px-4 sm:px-6 py-4 mb-8">
+                    <div className="sticky top-0 bg-white z-20 border-b border-gray-300 rounded-t-xl px-4 sm:px-6 py-4 mb-8">
                         <div className="flex items-center justify-between">
                             <button
                                 onClick={() => setShowModal(false)}
@@ -101,11 +101,11 @@ const ContentModal = ({ setShowModal, property }) => {
                                     return (
                                         <div
                                             key={item.id}
-                                            className=" rounded bg-white"
+                                            className="bg-white mb-8 border-b border-gray-300 pb-3"
                                         >
-                                            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-3 sm:p-4">
+                                            <div className="flex gap-4">
                                                 {/* Image */}
-                                                <div className="flex-shrink-0">
+                                                <div className="shrink-0">
                                                     <div
                                                         onClick={() => handelDetails(item)}
                                                         className="cursor-pointer"
@@ -113,33 +113,33 @@ const ContentModal = ({ setShowModal, property }) => {
                                                         <img
                                                             src={item.image}
                                                             alt={item.title}
-                                                            className="w-30 h-26 object-cover rounded"
+                                                            className="w-28 h-26 object-cover rounded"
                                                         />
                                                     </div>
                                                 </div>
 
                                                 {/* Content */}
-                                                <div className="flex-1 min-w-0">
+                                                <div className="flex-1">
                                                     <div
                                                         onClick={() => handelDetails(item)}
-                                                        className="cursor-pointer mb-2 sm:mb-3"
+                                                        className="cursor-pointer sm:mb-3"
                                                     >
                                                         <h3 className="text-base sm:text-lg font-semibold text-gray-900 line-clamp-1">
                                                             {item.title}
                                                         </h3>
-                                                        <p className="text-gray-600 text-sm sm:text-base mt-1 line-clamp-2">
+                                                        <p className="text-gray-600 text-sm sm:text-base mt-1">
                                                             {item.description}
                                                         </p>
                                                     </div>
 
-                                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4">
+                                                    <div className="flex justify-between mt-2">
                                                         <div className="flex items-center">
                                                             <img
                                                                 className="h-4 w-4 sm:h-5 sm:w-5 mt-0.5"
                                                                 src={dirhum}
                                                                 alt="AED"
                                                             />
-                                                            <span className="text-lg sm:text-xl font-semibold text-gray-900">
+                                                            <span className="sm:text-xl font-semibold text-gray-900">
                                                                 {item.price.toLocaleString()}
                                                             </span>
                                                         </div>
@@ -148,13 +148,13 @@ const ContentModal = ({ setShowModal, property }) => {
                                                         {qty === 0 ? (
                                                             <button
                                                                 onClick={() => handleAdd(item.id)}
-                                                                className="w-full sm:w-auto border border-[#01788E] text-[#01788E] px-4 py-2 rounded flex items-center justify-center gap-2 font-medium text-sm sm:text-base cursor-pointer"
+                                                                className="border border-[#01788E] text-[#01788E] px-4 py-2 rounded flex items-center justify-center gap-2 font-medium text-sm sm:text-base cursor-pointer"
                                                             >
                                                                 <span>Add</span>
                                                                 <IoAddSharp className="text-xl" />
                                                             </button>
                                                         ) : (
-                                                            <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                                                            <div className="flex items-center justify-between">
                                                                 <button
                                                                     onClick={() => handleRemove(item.id)}
                                                                     className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center border border-gray-300 text-gray-600 rounded-full hover:bg-gray-50 transition-colors text-lg cursor-pointer"
@@ -286,7 +286,7 @@ const ContentModal = ({ setShowModal, property }) => {
                         </div>
 
                         {/* Footer Section - Fixed at bottom */}
-                        <div className="p-4 md:p-6 border-t flex-shrink-0">
+                        <div className="p-4 md:p-6 border-t shrink-0">
                             {/* Quantity Selector */}
                             <div className="flex items-center justify-center mb-4 md:mb-6">
                                 <button
@@ -314,7 +314,7 @@ const ContentModal = ({ setShowModal, property }) => {
                                         handleAdd(selectedItem.id);
                                     }
                                 }}
-                                className={`w-[305px] mx-auto py-3 md:py-3.5 flex items-center justify-center border ${quantities[selectedItem.id] ? 'border-gray-400 text-gray-400' : 'border-[#01788E] text-[#01788E]'} font-semibold rounded`}
+                                className={`w-full md:w-[305px] mx-auto py-3 md:py-3.5 flex items-center justify-center border ${quantities[selectedItem.id] ? 'border-gray-400 text-gray-400' : 'border-[#01788E] text-[#01788E]'} font-semibold rounded`}
                             >
                                 <span className="text-xl mr-2 font-medium">+</span>
                                 {quantities[selectedItem.id] ? 'Already Added' : 'Add To Basket'}

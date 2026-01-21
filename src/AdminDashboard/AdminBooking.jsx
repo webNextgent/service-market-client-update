@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { FaCalendarAlt, FaRegEye, FaRegEdit, FaRegTrashAlt, FaMapMarkerAlt, FaShare, FaExternalLinkAlt, FaCopy, FaWhatsapp, FaEnvelope, FaUser, FaPhone, FaDollarSign, FaChevronLeft, FaChevronRight, FaMap, FaLink } from "react-icons/fa";
 import { IoClose, IoCopyOutline } from "react-icons/io5";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const AdminBooking = () => {
     const queryClient = useQueryClient();
@@ -20,13 +21,38 @@ const AdminBooking = () => {
 
 
     // Fetch Bookings
+    // const { data: bookings = [], isLoading, error } = useQuery({
+    //     queryKey: ["bookingAdmin"],
+    //     queryFn: async () => {
+    //         const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/booking`);
+    //         if (!res.ok) throw new Error("Failed to fetch bookings");
+    //         const bookingRes = await res.json();
+    //         return bookingRes.Data || [];
+    //     },
+    //     retry: 2,
+    //     staleTime: 1000 * 60 * 5,
+    // });
+
+
     const { data: bookings = [], isLoading, error } = useQuery({
         queryKey: ["bookingAdmin"],
         queryFn: async () => {
-            const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/booking`);
-            if (!res.ok) throw new Error("Failed to fetch bookings");
-            const bookingRes = await res.json();
-            return bookingRes.Data || [];
+            try {
+                const res = await useAxiosSecure.get("/booking");
+                console.log("Full API response:", res.data);
+                console.log("Success:", res.data.success);
+                console.log("Data:", res.data.Data);
+
+                // Return the data based on your API structure
+                if (res.data.success) {
+                    return res.data.Data || [];
+                } else {
+                    throw new Error(res.data.message || "Failed to fetch bookings");
+                }
+            } catch (error) {
+                console.error("Error fetching bookings:", error);
+                throw error;
+            }
         },
         retry: 2,
         staleTime: 1000 * 60 * 5,

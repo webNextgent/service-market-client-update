@@ -267,7 +267,7 @@ const Services = () => {
             </div>
 
             {/* for mobile & tablet view  */}
-            <div className="lg:hidden fixed bottom-0 left-0 w-full bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.08)] border-t border-gray-200 z-50">
+            <div className="lg:hidden fixed bottom-0 left-0 w-full bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.08)] border-t border-gray-200 z-40">
                 <div className="flex justify-center px-3 py-2">
                     <div className="flex items-center gap-4">
 
