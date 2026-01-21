@@ -77,7 +77,7 @@ const ContentModal = ({ setShowModal, property }) => {
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header */}
-                    <div className="sticky top-0 bg-white z-20 border-b border-gray-100 rounded-t-xl px-4 sm:px-6 py-4">
+                    <div className="sticky top-0 bg-white z-20 border-b border-gray-100 rounded-t-xl px-4 sm:px-6 py-4 mb-8">
                         <div className="flex items-center justify-between">
                             <button
                                 onClick={() => setShowModal(false)}
@@ -101,7 +101,7 @@ const ContentModal = ({ setShowModal, property }) => {
                                     return (
                                         <div
                                             key={item.id}
-                                            className="border border-gray-200 rounded-lg hover:border-gray-300 transition-colors bg-white"
+                                            className=" rounded bg-white"
                                         >
                                             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-3 sm:p-4">
                                                 {/* Image */}
@@ -113,7 +113,7 @@ const ContentModal = ({ setShowModal, property }) => {
                                                         <img
                                                             src={item.image}
                                                             alt={item.title}
-                                                            className="w-full h-40 sm:w-32 sm:h-32 lg:w-36 lg:h-36 object-cover rounded-lg mx-auto sm:mx-0 hover:opacity-90 transition-opacity"
+                                                            className="w-30 h-26 object-cover rounded"
                                                         />
                                                     </div>
                                                 </div>
@@ -133,13 +133,13 @@ const ContentModal = ({ setShowModal, property }) => {
                                                     </div>
 
                                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4">
-                                                        <div className="flex items-center gap-1.5 sm:gap-2">
+                                                        <div className="flex items-center">
                                                             <img
-                                                                className="h-4 w-4 sm:h-5 sm:w-5"
+                                                                className="h-4 w-4 sm:h-5 sm:w-5 mt-0.5"
                                                                 src={dirhum}
                                                                 alt="AED"
                                                             />
-                                                            <span className="text-lg sm:text-xl font-bold text-gray-900">
+                                                            <span className="text-lg sm:text-xl font-semibold text-gray-900">
                                                                 {item.price.toLocaleString()}
                                                             </span>
                                                         </div>
@@ -148,16 +148,16 @@ const ContentModal = ({ setShowModal, property }) => {
                                                         {qty === 0 ? (
                                                             <button
                                                                 onClick={() => handleAdd(item.id)}
-                                                                className="w-full sm:w-auto border border-[#01788E] text-[#01788E] hover:bg-[#01788E] hover:text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 font-medium transition-all duration-200 text-sm sm:text-base"
+                                                                className="w-full sm:w-auto border border-[#01788E] text-[#01788E] px-4 py-2 rounded flex items-center justify-center gap-2 font-medium text-sm sm:text-base cursor-pointer"
                                                             >
                                                                 <span>Add</span>
-                                                                <IoAddSharp className="w-4 h-4" />
+                                                                <IoAddSharp className="text-xl" />
                                                             </button>
                                                         ) : (
                                                             <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
                                                                 <button
                                                                     onClick={() => handleRemove(item.id)}
-                                                                    className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center border border-gray-300 text-gray-600 rounded-full hover:bg-gray-50 transition-colors text-lg"
+                                                                    className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center border border-gray-300 text-gray-600 rounded-full hover:bg-gray-50 transition-colors text-lg cursor-pointer"
                                                                 >
                                                                     −
                                                                 </button>
@@ -201,123 +201,12 @@ const ContentModal = ({ setShowModal, property }) => {
                 </div>
             </div>
 
-            {/* Detail Modal */}
-            {/* {showDetailModal && selectedItem && (
-                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-2 sm:p-4">
-                    <div
-                        className="absolute inset-0"
-                        onClick={closeDetailModal}
-                    />
-                    <div
-                        className="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-auto flex flex-col max-h-[90vh] relative z-10"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        
-                        <div className="sticky top-0 bg-white z-20 border-b border-gray-100 rounded-t-xl">
-                            <button
-                                onClick={closeDetailModal}
-                                className="absolute top-4 left-4 sm:left-6 text-gray-400 hover:text-gray-600 text-2xl p-1 transition-colors z-30"
-                            >
-                                <MdOutlineArrowBack className="w-6 h-6" />
-                            </button>
-
-                            <div
-                                className="h-48 sm:h-56 bg-cover bg-center rounded-t-xl"
-                                style={{ backgroundImage: `url(${selectedItem.image})` }}
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-t-xl" />
-                            </div>
-                        </div>
-
-                        <div className="flex-1 overflow-y-auto">
-                            <div className="px-4 sm:px-6 py-5 sm:py-6">
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-5">
-                                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 line-clamp-2">
-                                        {selectedItem.title}
-                                    </h2>
-                                    <div className="flex items-center gap-1.5 sm:gap-2 bg-gray-50 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg">
-                                        <img
-                                            src={dirhum}
-                                            alt="AED"
-                                            className="w-4 h-4 sm:w-5 sm:h-5"
-                                        />
-                                        <span className="text-xl sm:text-2xl font-bold text-gray-900">
-                                            {selectedItem.price.toLocaleString()}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-6 sm:mb-7">
-                                    {selectedItem.description}
-                                </p>
-
-                                <div className="border-t border-gray-200 my-5 sm:my-6" />
-
-                                <div>
-                                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-5">
-                                        What's Included
-                                    </h3>
-                                    <div className="space-y-3 sm:space-y-4">
-                                        {[
-                                            selectedItem.feature1,
-                                            selectedItem.feature2,
-                                            selectedItem.feature3,
-                                            selectedItem.feature4
-                                        ].filter(Boolean).map((feature, index) => (
-                                            <div key={index} className="flex items-start gap-3 sm:gap-4">
-                                                <div className="flex-shrink-0 w-2 h-2 bg-[#01788E] rounded-full mt-2.5 sm:mt-3"></div>
-                                                <p className="text-gray-700 text-sm sm:text-base flex-1">
-                                                    {feature}
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="sticky bottom-0 bg-white border-t border-gray-100 px-4 sm:px-6 py-4 sm:py-5 rounded-b-xl">
-                            <div className="flex items-center justify-center mb-4 sm:mb-5">
-                                <button
-                                    onClick={() => handleRemove(selectedItem.id)}
-                                    className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center border border-gray-300 text-gray-600 rounded-full hover:bg-gray-50 transition-colors text-xl sm:text-2xl"
-                                >
-                                    &minus;
-                                </button>
-                                <span className="text-xl sm:text-2xl font-semibold mx-6 sm:mx-8 w-8 sm:w-10 text-center">
-                                    {quantities[selectedItem.id] || 1}
-                                </span>
-                                <button
-                                    disabled
-                                    className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center border border-gray-400 text-gray-400 rounded-full cursor-not-allowed text-xl sm:text-2xl"
-                                    title="Maximum quantity reached"
-                                >
-                                    +
-                                </button>
-                            </div>
-
-                            <button
-                                onClick={() => {
-                                    if (!quantities[selectedItem.id]) {
-                                        handleAdd(selectedItem.id);
-                                    }
-                                }}
-                                className={`w-full border-2 ${quantities[selectedItem.id] ? 'border-gray-400 text-gray-400 cursor-default' : 'border-[#01788E] text-[#01788E] hover:bg-[#01788E] hover:text-white'} font-semibold py-3.5 sm:py-4 rounded-lg flex items-center justify-center gap-2 text-base sm:text-lg transition-all duration-200`}
-                            >
-                                <span className="text-xl font-medium">+</span>
-                                {quantities[selectedItem.id] ? 'Already Added' : 'Add To Basket'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )} */}
-
             {showDetailModal && selectedItem && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
                     onClick={closeDetailModal}
                 >
                     <div
-                        className="bg-white rounded-lg shadow-lg w-full max-w-md md:max-w-[600px] max-h-[90vh] flex flex-col"
+                        className="bg-white rounded-lg shadow-lg w-full max-w-md md:max-w-[600px] max-h-[90vh] flex flex-col relative"
                         onClick={(e) => e.stopPropagation()}
                     >
 
@@ -330,7 +219,7 @@ const ContentModal = ({ setShowModal, property }) => {
                         </button>
 
                         <div
-                            className="h-48 bg-cover bg-center flex-shrink-0"
+                            className="h-48 bg-cover bg-center shrink-0"
                             style={{
                                 backgroundImage: `url(${selectedItem.image})`
                             }}
@@ -359,7 +248,7 @@ const ContentModal = ({ setShowModal, property }) => {
 
                                 {/* What's Included Section */}
                                 <div>
-                                    <h3 className="text-base md:text-lg font-semibold mb-3">
+                                    <h3 className="text-base md:text-lg font-bold mb-3">
                                         What's included
                                     </h3>
                                     <div className="space-y-3">
@@ -425,7 +314,7 @@ const ContentModal = ({ setShowModal, property }) => {
                                         handleAdd(selectedItem.id);
                                     }
                                 }}
-                                className={`w-full py-3 md:py-3.5 flex items-center justify-center border ${quantities[selectedItem.id] ? 'border-gray-400 text-gray-400' : 'border-[#01788E] text-[#01788E] hover:bg-[#01788E] hover:text-white'} font-semibold rounded-lg transition-colors`}
+                                className={`w-[305px] mx-auto py-3 md:py-3.5 flex items-center justify-center border ${quantities[selectedItem.id] ? 'border-gray-400 text-gray-400' : 'border-[#01788E] text-[#01788E]'} font-semibold rounded`}
                             >
                                 <span className="text-xl mr-2 font-medium">+</span>
                                 {quantities[selectedItem.id] ? 'Already Added' : 'Add To Basket'}

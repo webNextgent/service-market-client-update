@@ -31,7 +31,7 @@ const CoverContent = ({ content }) => {
                                 <img
                                     src={property.image}
                                     alt={property.title}
-                                    className="w-30 h-26 object-cover "
+                                    className="w-30 h-26 object-cover"
                                 />
                                 {/*  Overlay */}
                                 <div className="absolute inset-0 bg-linear-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
