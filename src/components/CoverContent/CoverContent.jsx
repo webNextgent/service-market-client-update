@@ -69,7 +69,7 @@ const CoverContent = ({ content }) => {
 
                                 {/* Button - Professional Compact */}
                                 <div className="">
-                                    <button className=" border border-[#01788E] px-4 py-2 flex items-center justify-center gap-2 text-[#01788E] rounded text-sm font-medium cursor-pointer">
+                                    <button className="border border-[#01788E] px-4 py-2 flex items-center justify-center gap-2 text-[#01788E] rounded text-[12px] font-medium cursor-pointer">
                                         <span>{property.propertyItems?.length || 0} Options</span>
                                         <MdOutlineArrowRightAlt className="w-4 h-4" />
                                     </button>

@@ -40,6 +40,8 @@ export default function BookingDetails() {
         setModalRescudle(true);
     }
 
+    console.log(item);
+
     const handleAddInstructions = () => {
         console.log("Instructions saved:", instructions);
         setOpenInstructionsModal(false);
@@ -90,12 +92,14 @@ export default function BookingDetails() {
         queryKey: ['date-time-user'],
         queryFn: async () => {
             const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/date-time`);
+            // const res = await axiosSecure.get(`/date-time`);
             if (!res.ok) {
                 throw new Error("Failed to fetch date-time");
             }
             return res.json();
         }
     });
+    console.log(dateTime);
 
     const formatDateForDisplay = (dateString) => {
         if (!dateString) return "";

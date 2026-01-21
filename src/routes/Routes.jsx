@@ -22,7 +22,9 @@ import AdminDateTime from "../AdminDashboard/AdminDateTime";
 import LocationPicker from "./pages/LocationPicker/LocationPicker";
 import { createBrowserRouter } from "react-router-dom";
 import AddPromoCode from "../AdminDashboard/AddPromoCode";
-import LoginModal from "../components/LoginModal/LoginModal";
+import axiosSecure from "../utils/axiosSecure";
+import ProtectedRoute from "./ProtectedRoute";
+import UserManagement from "../AdminDashboard/UserManagement";
 
 export const router = createBrowserRouter([
     {
@@ -30,34 +32,32 @@ export const router = createBrowserRouter([
         element: <Main />,
         children: [
             { path: '/', element: <Home /> },
-            { path: 'location', element: <LocationPicker /> },
-            { path: 'address', element: <Address /> },
-            { path: 'date-time', element: <DateTime /> },
-            { path: 'confirmation', element: <Confirmation /> },
-            { path: 'booking-success', element: <BookingSuccess /> },
-            // { path: 'booking-details', element: <BookingDetails /> }
+            { path: 'location', element: <ProtectedRoute><LocationPicker /></ProtectedRoute> },
+            { path: 'address', element: <ProtectedRoute><Address /> </ProtectedRoute> },
+            { path: 'date-time', element: <ProtectedRoute><DateTime /></ProtectedRoute> },
+            { path: 'confirmation', element: <ProtectedRoute> <Confirmation /> </ProtectedRoute> },
+            { path: 'booking-success', element: <ProtectedRoute> <BookingSuccess /></ProtectedRoute> },
             {
-                path: '/booking-details/:id',
-                element: <BookingDetails></BookingDetails>,
-                loader: ({ params }) => fetch(`${import.meta.env.VITE_BACKEND_API_URL}/booking/${params.id}`)
+                path: "/booking-details/:id",
+                element: <ProtectedRoute> <BookingDetails /></ProtectedRoute>,
+                loader: async ({ params }) => {
+                    const res = await axiosSecure.get(`/booking/${params.id}`);
+                    return res.data;
+                }
             },
-            { path: '/login', element: <LoginModal /> },
-            // { path: 'register', element: <RegisterForm /> }
         ]
     },
     {
         path: 'dashboard',
         element: <UserDashboard />,
         children: [
-            { path: 'booking', element: <UserBooking /> },
-            // { path: 'quotes', element: <UserQuotes /> },
-            { path: 'profile', element: <UserProfile /> },
-            // { path: 'outstanding-payments', element: <OutstandingPayments /> },
-            { path: 'saved-locations', element: <SavedLocations /> },
-            { path: 'payment-methods', element: <PaymentMethods /> },
-            { path: 'wallet', element: <MyWallet /> },
-            { path: 'delete-account', element: <DeleteAccount /> },
-            { path: 'invite-friend', element: <InviteFriend /> },
+            { path: 'booking', element: <ProtectedRoute> <UserBooking /></ProtectedRoute> },
+            { path: 'profile', element: <ProtectedRoute> <UserProfile /></ProtectedRoute> },
+            { path: 'saved-locations', element: <ProtectedRoute> <SavedLocations /></ProtectedRoute> },
+            { path: 'payment-methods', element: <ProtectedRoute> <PaymentMethods /></ProtectedRoute> },
+            { path: 'wallet', element: <ProtectedRoute><MyWallet /> </ProtectedRoute> },
+            { path: 'delete-account', element: <ProtectedRoute> <DeleteAccount /></ProtectedRoute> },
+            { path: 'invite-friend', element: <ProtectedRoute><InviteFriend /></ProtectedRoute> },
 
             // admin routes 
             { path: 'add-services', element: <AddServices /> },
@@ -67,7 +67,7 @@ export const router = createBrowserRouter([
             { path: 'add-property-item', element: <AddPropertyItem /> },
             { path: 'add-promo-code', element: <AddPromoCode /> },
             { path: 'admin-date-time', element: <AdminDateTime /> },
-            // { path: 'user-management', element: <UserManagement /> },
+            { path: 'user-management', element: <UserManagement /> },
         ]
     }
 ]);
