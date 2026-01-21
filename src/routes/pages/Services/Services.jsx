@@ -110,17 +110,17 @@ const Services = () => {
                                         return (
                                             <div
                                                 key={item.id}
-                                                className="md:flex items-center border-b pb-2.5 border-gray-300 space-y-2 mb-4"
+                                                className="flex gap-4 border-b pb-2.5 border-gray-300 space-y-2 mb-4"
                                             >
                                                 {/* Image */}
                                                 <img
                                                     src={item.image}
                                                     alt={item.title}
-                                                    className="w-24 h-24 mx-auto object-cover rounded-sm"
+                                                    className="w-28 h-26 mx-auto object-cover rounded-sm"
                                                 />
 
                                                 {/* Content */}
-                                                <div className="ml-5 space-y-2 flex-1 text-center md:text-start">
+                                                <div className="space-y-2 flex-1">
                                                     <div>
                                                         <h3 className="text-[16px] font-semibold">{item.title}</h3>
                                                         <p className="text-gray-600 text-[13px]">{item.description}</p>

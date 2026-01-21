@@ -282,7 +282,7 @@ const UserDashboard = () => {
             </div>
 
             {/* Drawer Side */}
-            <div className="drawer-side border border-[#CED4DA]">
+            <div className="drawer-side ">
                 <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
 
                 <div className="md:w-72 bg-[#FFFFFF] p-2 relative min-h-screen">
