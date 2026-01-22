@@ -59,17 +59,10 @@ const DeleteAccount = () => {
             icon: "error",
             confirmButtonColor: "#d33",
           });
-          console.error(err);
         }
       }
     });
   };
-
-  // If you want to show loading state
-  // if (isLoading) return <div>Loading...</div>;
-
-  // If you want to show error state
-  // if (error) return <div>Error loading user data</div>;
 
   return (
     <div className="w-full px-4 md:px-10 py-6">
