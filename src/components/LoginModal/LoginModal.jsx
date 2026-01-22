@@ -26,9 +26,6 @@ const LoginModal = ({ open, onClose }) => {
         iso: 'ae'
     });
 
-
-    console.log("saikat")
-
     // Reset state when modal closes
     useEffect(() => {
         if (!open) {

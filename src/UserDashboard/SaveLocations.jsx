@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { FiEdit3, FiTrash2, FiPlus, FiMapPin, FiHome, FiBriefcase, FiMap, FiX } from "react-icons/fi";
 import { useSummary } from "../provider/SummaryProvider";
 import { useEffect, useState } from "react";
@@ -7,23 +8,21 @@ export default function SavedLocations() {
     const { getAddresses, removeAddress, setSaveAddress } = useSummary();
     const [savedAddresses, setSavedAddresses] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalMode, setModalMode] = useState("add"); // "add" বা "edit"
+    const [modalMode, setModalMode] = useState("add");
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [selectedType, setSelectedType] = useState("Apartment");
     const buttons = ["Apartment", "Villa", "Office", "Other"];
 
-    // React Hook Form সেটআপ
-    const { 
-        register, 
-        handleSubmit, 
-        reset, 
+    const {
+        register,
+        handleSubmit,
+        reset,
         setValue,
-        formState: { errors, isValid } 
+        formState: { errors, isValid }
     } = useForm({
         mode: "onChange"
     });
 
-    // Address লোড করুন
     useEffect(() => {
         const addresses = getAddresses();
         setSavedAddresses(addresses);
@@ -82,7 +81,7 @@ export default function SavedLocations() {
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             };
-            
+
             setSaveAddress(prev => {
                 const updated = [...prev, newAddress];
                 localStorage.setItem("saveAddress", JSON.stringify(updated));
@@ -109,7 +108,7 @@ export default function SavedLocations() {
         setSelectedAddress(address);
         setSelectedType(address.type || "Apartment");
         setModalMode("edit");
-        
+
         // ফর্ম ফিল করুন
         reset({
             city: address.city || "",
@@ -123,7 +122,7 @@ export default function SavedLocations() {
             nickname: address.nickname || "",
             additionalInfo: address.additionalInfo || ""
         });
-        
+
         setIsModalOpen(true);
     };
 
@@ -132,7 +131,7 @@ export default function SavedLocations() {
         setSelectedAddress(null);
         setSelectedType("Apartment");
         setModalMode("add");
-        
+
         // ফর্ম রিসেট করুন
         reset({
             city: "",
@@ -146,7 +145,7 @@ export default function SavedLocations() {
             nickname: "",
             additionalInfo: ""
         });
-        
+
         setIsModalOpen(true);
     };
 
@@ -191,15 +190,15 @@ export default function SavedLocations() {
     // Address ফরম্যাট করুন
     const formatAddress = (item) => {
         if (item.displayAddress) return item.displayAddress;
-        
+
         const parts = [];
-        if (item.apartmentNo || item.villaNo || item.otherNo) 
+        if (item.apartmentNo || item.villaNo || item.otherNo)
             parts.push(item.apartmentNo || item.villaNo || item.otherNo);
-        if (item.buildingName || item.community || item.streetName) 
+        if (item.buildingName || item.community || item.streetName)
             parts.push(item.buildingName || item.community || item.streetName);
         if (item.area) parts.push(item.area);
         if (item.city) parts.push(item.city);
-        
+
         return parts.join(", ");
     };
 
@@ -256,17 +255,17 @@ export default function SavedLocations() {
                                                 </p>
                                             </div>
                                         </div>
-                                        
+
                                         <p className="text-[13px] text-gray-600 mt-1 ml-11">
                                             {formatAddress(item)}
                                         </p>
-                                        
+
                                         {item.additionalInfo && (
                                             <p className="text-xs text-gray-500 mt-2 ml-11">
                                                 📝 {item.additionalInfo}
                                             </p>
                                         )}
-                                        
+
                                         {item.mapLatitude && item.mapLongitude && (
                                             <div className="flex items-center gap-1 text-xs text-gray-400 mt-2 ml-11">
                                                 <FiMap size={12} />
@@ -320,7 +319,7 @@ export default function SavedLocations() {
                 {savedAddresses.length > 0 && (
                     <div className="mt-6 pt-4 border-t text-sm text-gray-500">
                         <p>
-                            You have <span className="font-medium text-teal-600">{savedAddresses.length}</span> saved 
+                            You have <span className="font-medium text-teal-600">{savedAddresses.length}</span> saved
                             address{savedAddresses.length !== 1 ? 'es' : ''}
                         </p>
                     </div>
@@ -354,8 +353,8 @@ export default function SavedLocations() {
                                         type="button"
                                         onClick={() => handleTypeChange(btn)}
                                         className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
-                                            ${selectedType === btn 
-                                                ? "bg-teal-600 text-white" 
+                                            ${selectedType === btn
+                                                ? "bg-teal-600 text-white"
                                                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                                             }`}
                                     >
@@ -368,7 +367,6 @@ export default function SavedLocations() {
                             <div>
                                 <label className="block text-gray-700 font-medium mb-2">
                                     Nickname (Optional)
-                                    <span className="text-gray-400 text-sm ml-1">e.g., Home, Office</span>
                                 </label>
                                 <input
                                     {...register("nickname")}
@@ -536,8 +534,8 @@ export default function SavedLocations() {
                                     type="submit"
                                     disabled={!isValid}
                                     className={`flex-1 px-4 py-3 rounded-lg font-medium transition-colors
-                                        ${isValid 
-                                            ? "bg-teal-600 text-white hover:bg-teal-700" 
+                                        ${isValid
+                                            ? "bg-teal-600 text-white hover:bg-teal-700"
                                             : "bg-gray-300 text-gray-500 cursor-not-allowed"
                                         }`}
                                 >

@@ -24,18 +24,13 @@ export default function UserBooking() {
     { id: "Completed", label: "Completed", icon: <MdOutlineWatchLater /> },
   ];
 
-  // Fetch Data
   const { data: booking = {}, isLoading } = useQuery({
     queryKey: ["bookingUser"],
     queryFn: async () => {
-      // const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/booking`);
       const res = await axiosSecure.get("/booking/my-booking");
-      console.log(res);
       return res.data;
     },
   });
-  console.log(booking);
-
   const bookingData = booking?.Data || [];
 
   // Filter when tab changes

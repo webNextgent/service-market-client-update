@@ -12,47 +12,19 @@ import dirhum from '../../../assets/icon/dirhum.png';
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import useAuth from "../../../hooks/useAuth";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 
 export default function Confirmation() {
     const [openModal, setOpenModal] = useState(false);
     const { serviceCharge, subTotal, services, vat, date, time, mapLongitude, mapLatitude, liveAddress, itemSummary, useDiscount, servicePrice, promoStatus, showInput, setShowInput, handleApply, totalAfterDiscount } = useSummary();
+    const axiosSecure = useAxiosSecure();
 
     const promoInputRef = useRef();
     const [paymentMethod, setPaymentMethod] = useState("");
     const navigate = useNavigate();
     const ides = itemSummary.map(p => p.id);
     const { user } = useAuth();
-
-    // const REQUIRED_FIELDS = [
-    //     "propertyItemIds",
-    //     "serviceName",
-    //     "address",
-    //     "serviceFee",
-    //     "subTotal",
-    //     "vat",
-    //     "totalPay",
-    //     "date",
-    //     "time",
-    //     "paymentMethod",
-    // ];
-
-    // const isPayloadValid = (payload) => {
-    //     for (const key of REQUIRED_FIELDS) {
-    //         const value = payload[key];
-
-    //         if (
-    //             value === null ||
-    //             value === undefined ||
-    //             value === "" ||
-    //             (Array.isArray(value) && value.length === 0)
-    //         ) {
-    //             return { isValid: false, missingField: key };
-    //         }
-    //     }
-    //     return { isValid: true };
-    // };
-
 
     const getDisplayAddress = () => {
         if (!liveAddress) return null;
@@ -125,21 +97,12 @@ export default function Confirmation() {
         console.log(payload);
 
         try {
-            const response = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/booking/create`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                }
-            );
+            const res = await axiosSecure.post("/booking/create", payload);
+            console.log("API Response:", res?.data?.success);
 
-            const responseData = await response.json();
-            console.log("API Response:", responseData);
-
-            if (!response.ok) {
-                if (responseData.message) {
-                    toast.error(`Booking failed: ${responseData.message}`);
+            if (!res?.data?.success) {
+                if (res.message) {
+                    toast.error(`Booking failed: ${res.message}`);
                 } else {
                     toast.error("Booking failed. Please try again.");
                 }

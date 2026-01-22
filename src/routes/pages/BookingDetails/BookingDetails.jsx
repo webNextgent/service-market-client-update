@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { FiMessageCircle, FiPhone } from "react-icons/fi";
@@ -11,6 +12,7 @@ import { MdLocationOn, MdCalendarToday, MdPayment, MdInfo } from "react-icons/md
 import { HiBuildingOffice, HiHome } from "react-icons/hi2";
 import { BsClock, BsTag } from "react-icons/bs";
 import { TbReceipt } from "react-icons/tb";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 export default function BookingDetails() {
     const item = useLoaderData();
@@ -28,19 +30,17 @@ export default function BookingDetails() {
     const [isUpdatingAddress, setIsUpdatingAddress] = useState(false);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(item?.Data?.paymentMethod || "Cash");
     const [isUpdatingPayment, setIsUpdatingPayment] = useState(false);
+    const axiosSecure = useAxiosSecure();
 
     const { register, handleSubmit, formState: { errors }, setValue } = useForm({
         mode: "onChange"
     });
-    console.log(item.Data);
     const [selectedType, setSelectedType] = useState("Apartment");
     const propertyTypes = ["Apartment", "Villa", "Office", "Other"];
 
     const handelReschudeleFun = () => {
         setModalRescudle(true);
     }
-
-    console.log(item);
 
     const handleAddInstructions = () => {
         console.log("Instructions saved:", instructions);
@@ -91,12 +91,13 @@ export default function BookingDetails() {
     const { data: dateTime, isLoading } = useQuery({
         queryKey: ['date-time-user'],
         queryFn: async () => {
-            const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/date-time`);
-            // const res = await axiosSecure.get(`/date-time`);
-            if (!res.ok) {
+            const res = await axiosSecure.get(`/date-time`);
+            console.log(res?.data?.success);
+
+            if (!res?.data?.success) {
                 throw new Error("Failed to fetch date-time");
             }
-            return res.json();
+            return res?.data;
         }
     });
     console.log(dateTime);
@@ -384,49 +385,46 @@ export default function BookingDetails() {
     // Reschedule function
     const handleRescheduleSubmit = async (id) => {
         const bookingId = id;
-
         if (!selectedDay) {
             alert("Please select a day");
             return;
         }
-
         if (!selectedTime) {
             alert("Please select a time slot");
             return;
         }
-
         const updatedData = {
             date: selectedDay,
             time: selectedTime,
         };
-
-        console.log("Sending PATCH request for reschedule:", updatedData);
-
         try {
-            const response = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/booking/userBooking/${bookingId}`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(updatedData),
-                }
-            );
+            // const resReshudle = await fetch(
+            //     `${import.meta.env.VITE_BACKEND_API_URL}/booking/userBooking/${bookingId}`,
+            //     {
+            //         method: "PATCH",
+            //         headers: {
+            //             "Content-Type": "application/json",
+            //         },
+            //         body: JSON.stringify(updatedData),
+            //     }
+            // );
 
-            console.log("Response status:", response.status);
-            console.log("Response status text:", response.statusText);
+            const resReshudle = await axiosSecure.patch(`/booking/userBooking/${bookingId}`, updatedData);
 
-            const data = await response.json();
+
+            console.log("Response status:", resReshudle.status);
+            console.log("Response status text:", resReshudle.statusText);
+
+            const data = await resReshudle.json();
             console.log("Response data:", data);
 
-            if (response.ok) {
+            if (resReshudle.ok) {
                 console.log("Reschedule successful:", data);
                 setModalRescudle(false);
                 alert("Booking rescheduled successfully!");
             } else {
                 console.error("Failed:", data);
-                alert(`Failed to reschedule: ${data.message || `Error ${response.status}`}`);
+                alert(`Failed to reschedule: ${data.message || `Error ${resReshudle.status}`}`);
             }
         } catch (error) {
             console.error("Error:", error);
@@ -627,7 +625,7 @@ export default function BookingDetails() {
                                     </div>
                                     <span className="font-medium text-gray-900">{item?.Data?.paymentMethod}</span>
                                 </div>
-                                <div className="flex justify-between items-center p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg">
+                                <div className="flex justify-between items-center p-3 bg-linear-to-r from-blue-50 to-cyan-50 rounded-lg">
                                     <div>
                                         <p className="font-semibold text-gray-900">Total to Pay</p>
                                         <p className="text-sm text-gray-600">Inclusive of all charges</p>
@@ -655,7 +653,7 @@ export default function BookingDetails() {
                             <div className="space-y-3">
                                 <button
                                     onClick={() => setOpenModal(true)}
-                                    className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-xl transition shadow-md hover:shadow-lg"
+                                    className="w-full py-3.5 bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-xl transition shadow-md hover:shadow-lg"
                                 >
                                     Manage Booking Options
                                 </button>
@@ -1040,7 +1038,7 @@ export default function BookingDetails() {
                                             <span className="text-lg font-semibold text-gray-900">{item?.Data?.cashOnDelivery}</span>
                                         </div>
                                     </div>
-                                    <div className="flex justify-between items-center p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border border-blue-200 mt-6">
+                                    <div className="flex justify-between items-center p-4 bg-linear-to-r from-blue-50 to-blue-100 rounded-xl border border-blue-200 mt-6">
                                         <div>
                                             <span className="font-semibold text-gray-900 text-lg">Total to Pay</span>
                                             <p className="text-sm text-gray-600">Final amount including all taxes</p>
@@ -1073,7 +1071,7 @@ export default function BookingDetails() {
                                             <LuArrowLeft className="text-xl" />
                                         </button>
                                         <div>
-                                            <h2 className="text-xl font-bold text-gray-900">Reschedule Booking</h2>
+                                            <h2 className="text-xl font-semibold text-gray-900">Reschedule Booking</h2>
                                             <p className="text-gray-600">Select a new date and time for your service</p>
                                         </div>
                                     </div>
@@ -1084,9 +1082,9 @@ export default function BookingDetails() {
                                 <div className="space-y-8">
                                     {/* Day Selector */}
                                     <div>
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                        <h3 className="text-lg font-normal text-gray-900 mb-4 flex items-center gap-2">
                                             <MdCalendarToday className="text-blue-600" />
-                                            Select Date
+                                            Which day would you like us to come?
                                         </h3>
                                         {isLoading && (
                                             <div className="text-center py-12">
@@ -1122,8 +1120,8 @@ export default function BookingDetails() {
                                                                 <button
                                                                     key={`${day.date}-${index}`}
                                                                     onClick={() => setSelectedDay(day.date)}
-                                                                    className={`min-w-[120px] px-4 py-4 rounded-xl border flex flex-col items-center gap-1 transition-all duration-200 ${isActive
-                                                                        ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white border-transparent shadow-lg"
+                                                                    className={`min-w-[100px] px-4 py-4 rounded-xl border flex flex-col items-center gap-1 transition-all duration-200 ${isActive
+                                                                        ? "bg-[#B2D7DE] text-white border-transparent shadow-lg"
                                                                         : "bg-white border-gray-200 hover:bg-gray-50 hover:shadow-md"
                                                                         }`}
                                                                 >

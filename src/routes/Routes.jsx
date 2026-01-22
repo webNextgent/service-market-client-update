@@ -23,8 +23,9 @@ import LocationPicker from "./pages/LocationPicker/LocationPicker";
 import { createBrowserRouter } from "react-router-dom";
 import AddPromoCode from "../AdminDashboard/AddPromoCode";
 import axiosSecure from "../utils/axiosSecure";
-import ProtectedRoute from "./ProtectedRoute";
+import ProtectedRouteUser from "./ProtectedRouteUser";
 import UserManagement from "../AdminDashboard/UserManagement";
+import ProtectedRouteAdmin from "./ProtectedRouteAdmin";
 
 export const router = createBrowserRouter([
     {
@@ -32,14 +33,14 @@ export const router = createBrowserRouter([
         element: <Main />,
         children: [
             { path: '/', element: <Home /> },
-            { path: 'location', element: <ProtectedRoute><LocationPicker /></ProtectedRoute> },
-            { path: 'address', element: <ProtectedRoute><Address /> </ProtectedRoute> },
-            { path: 'date-time', element: <ProtectedRoute><DateTime /></ProtectedRoute> },
-            { path: 'confirmation', element: <ProtectedRoute> <Confirmation /> </ProtectedRoute> },
-            { path: 'booking-success', element: <ProtectedRoute> <BookingSuccess /></ProtectedRoute> },
+            { path: 'location', element: <ProtectedRouteUser><LocationPicker /></ProtectedRouteUser> },
+            { path: 'address', element: <ProtectedRouteUser><Address /> </ProtectedRouteUser> },
+            { path: 'date-time', element: <ProtectedRouteUser><DateTime /></ProtectedRouteUser> },
+            { path: 'confirmation', element: <ProtectedRouteUser> <Confirmation /> </ProtectedRouteUser> },
+            { path: 'booking-success', element: <ProtectedRouteUser> <BookingSuccess /></ProtectedRouteUser> },
             {
                 path: "/booking-details/:id",
-                element: <ProtectedRoute> <BookingDetails /></ProtectedRoute>,
+                element: <ProtectedRouteUser> <BookingDetails /></ProtectedRouteUser>,
                 loader: async ({ params }) => {
                     const res = await axiosSecure.get(`/booking/${params.id}`);
                     return res.data;
@@ -49,25 +50,25 @@ export const router = createBrowserRouter([
     },
     {
         path: 'dashboard',
-        element: <UserDashboard />,
+        element: <ProtectedRouteUser><UserDashboard /></ProtectedRouteUser>,
         children: [
-            { path: 'booking', element: <ProtectedRoute> <UserBooking /></ProtectedRoute> },
-            { path: 'profile', element: <ProtectedRoute> <UserProfile /></ProtectedRoute> },
-            { path: 'saved-locations', element: <ProtectedRoute> <SavedLocations /></ProtectedRoute> },
-            { path: 'payment-methods', element: <ProtectedRoute> <PaymentMethods /></ProtectedRoute> },
-            { path: 'wallet', element: <ProtectedRoute><MyWallet /> </ProtectedRoute> },
-            { path: 'delete-account', element: <ProtectedRoute> <DeleteAccount /></ProtectedRoute> },
-            { path: 'invite-friend', element: <ProtectedRoute><InviteFriend /></ProtectedRoute> },
+            { path: 'booking', element: <ProtectedRouteUser> <UserBooking /></ProtectedRouteUser> },
+            { path: 'profile', element: <ProtectedRouteUser> <UserProfile /></ProtectedRouteUser> },
+            { path: 'saved-locations', element: <ProtectedRouteUser> <SavedLocations /></ProtectedRouteUser> },
+            { path: 'payment-methods', element: <ProtectedRouteUser> <PaymentMethods /></ProtectedRouteUser> },
+            { path: 'wallet', element: <ProtectedRouteUser><MyWallet /> </ProtectedRouteUser> },
+            { path: 'delete-account', element: <ProtectedRouteUser> <DeleteAccount /></ProtectedRouteUser> },
+            { path: 'invite-friend', element: <ProtectedRouteUser><InviteFriend /></ProtectedRouteUser> },
 
             // admin routes 
-            { path: 'add-services', element: <AddServices /> },
-            { path: 'admin-booking', element: <AdminBooking /> },
-            { path: 'add-service-type', element: <AddServiceType /> },
-            { path: 'add-property-type', element: <AddPropertyType /> },
-            { path: 'add-property-item', element: <AddPropertyItem /> },
-            { path: 'add-promo-code', element: <AddPromoCode /> },
-            { path: 'admin-date-time', element: <AdminDateTime /> },
-            { path: 'user-management', element: <UserManagement /> },
+            { path: 'add-services', element: <ProtectedRouteAdmin> <AddServices /></ProtectedRouteAdmin> },
+            { path: 'admin-booking', element: <ProtectedRouteAdmin><AdminBooking /></ProtectedRouteAdmin> },
+            { path: 'add-service-type', element: <ProtectedRouteAdmin><AddServiceType /> </ProtectedRouteAdmin> },
+            { path: 'add-property-type', element: <ProtectedRouteAdmin><AddPropertyType /></ProtectedRouteAdmin> },
+            { path: 'add-property-item', element: <ProtectedRouteAdmin><AddPropertyItem /></ProtectedRouteAdmin> },
+            { path: 'add-promo-code', element: <ProtectedRouteAdmin><AddPromoCode /></ProtectedRouteAdmin> },
+            { path: 'admin-date-time', element: <ProtectedRouteAdmin><AdminDateTime /></ProtectedRouteAdmin> },
+            { path: 'user-management', element: <ProtectedRouteAdmin><UserManagement /></ProtectedRouteAdmin> },
         ]
     }
 ]);

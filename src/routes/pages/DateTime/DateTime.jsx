@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import NextBtn from "../../../components/NextBtn/NextBtn";
 import ServiceDetails from "../../../components/ServiceDetails/ServiceDetails";
