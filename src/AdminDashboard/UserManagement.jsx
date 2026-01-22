@@ -50,7 +50,6 @@ const UserManagement = () => {
     }
 
     if (isLoading) return <p className="text-center text-2xl font-serif text-cyan-500 mt-16 mb-10">Loading...</p>
-
     return (
         <div>
             <div className="md:flex justify-around mb-8">
