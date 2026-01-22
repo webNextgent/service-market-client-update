@@ -474,7 +474,7 @@ const LoginModal = ({ open, onClose }) => {
                 {!otpSuccessModal ? (
                     <>
                         {/* Header */}
-                        <h2 className="text-[28px] font-bold mb-6 text-[#1a1a1a]">Log in or sign up</h2>
+                        <h2 className="text-[28px] font-bold mb-6 text-[#1a1a1a]">Log in or sign up saikat</h2>
 
                         <p className="text-[17px] text-[#333333] mb-8">
                             Please enter your mobile number to proceed.
