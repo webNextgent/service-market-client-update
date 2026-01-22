@@ -16,7 +16,7 @@ jobs:
           script: |
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            cd /root/your-project
+            cd /root/service-market-client-update
             git pull origin main
             npm install
             npm run build
