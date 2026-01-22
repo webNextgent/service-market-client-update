@@ -1120,9 +1120,9 @@ export default function BookingDetails() {
                                                                 <button
                                                                     key={`${day.date}-${index}`}
                                                                     onClick={() => setSelectedDay(day.date)}
-                                                                    className={`min-w-[100px] px-4 py-4 rounded-xl border flex flex-col items-center gap-1 transition-all duration-200 ${isActive
-                                                                        ? "bg-[#B2D7DE] text-white border-transparent shadow-lg"
-                                                                        : "bg-white border-gray-200 hover:bg-gray-50 hover:shadow-md"
+                                                                    className={`min-w-[100px] px-4 py-4 rounded-xl border border-gray-300 flex flex-col items-center gap-1 transition-all duration-200 text-gray-800 ${isActive
+                                                                        ? "bg-[#B2D7DE]"
+                                                                        : "bg-white"
                                                                         }`}
                                                                 >
                                                                     <div className={`text-sm ${isActive ? "text-blue-100" : "text-gray-600"}`}>
@@ -1131,11 +1131,11 @@ export default function BookingDetails() {
                                                                     <div className={`font-semibold ${isActive ? "text-white" : "text-gray-900"}`}>
                                                                         {day.label}
                                                                     </div>
-                                                                    {day.timeSlots && day.timeSlots.length > 0 && (
+                                                                    {/* {day.timeSlots && day.timeSlots.length > 0 && (
                                                                         <div className={`text-xs mt-1 ${isActive ? "text-blue-100" : "text-green-600"}`}>
                                                                             {day.timeSlots.length} slot{day.timeSlots.length !== 1 ? 's' : ''}
                                                                         </div>
-                                                                    )}
+                                                                    )} */}
                                                                 </button>
                                                             );
                                                         })}
