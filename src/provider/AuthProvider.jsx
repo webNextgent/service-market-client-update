@@ -13,7 +13,7 @@ const AuthProvider = ({ children }) => {
         if (token) {
             try {
                 const decoded = jwtDecode(token);
-                setUser(decoded);
+                setUser(decoded)
             } catch {
                 localStorage.removeItem("access-token");
             }

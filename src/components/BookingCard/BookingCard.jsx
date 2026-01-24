@@ -12,7 +12,7 @@ const statusColors = {
 };
 
 const BookingCard = ({ item }) => {
-    const { serviceName, status, date, time, totalPay } = item;
+    const { serviceName, status, date, time, totalPay, propertyItems = [] } = item;
     const navigate = useNavigate();
 
     const handelManagebooking = item => {
@@ -25,14 +25,37 @@ const BookingCard = ({ item }) => {
 
             {/* Header */}
             <div className="flex justify-between items-start">
-                <div>
+                {/* <div>
                     <h2 className="text-[20px] font-semibold text-gray-900">
                         {serviceName}
                     </h2>
                     <p className="text-[14px] text-gray-500 mt-1">
                         {date} • {time}
                     </p>
+                </div> */}
+
+                <div>
+                    <h2 className="text-[20px] font-semibold text-gray-900">
+                        {serviceName}
+                    </h2>
+
+                    {propertyItems.length > 0 && (
+                        <p className="text-[14px] text-gray-600 mt-1">
+                            {propertyItems.map((p, index) => (
+                                <span key={index}>
+                                    {p.title}
+                                    {index !== propertyItems.length - 1 && ", "}
+                                </span>
+                            ))}
+                        </p>
+                    )}
+
+                    <p className="text-[14px] text-gray-500 mt-1">
+                        {date} • {time}
+                    </p>
                 </div>
+
+
 
                 {/* Status Badge */}
                 <span
