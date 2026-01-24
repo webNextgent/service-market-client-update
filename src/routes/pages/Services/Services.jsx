@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // update active route
 import ServiceDetails from "../../../components/ServiceDetails/ServiceDetails";
 import Summery from "../../../components/Summery/Summery";
@@ -12,10 +13,11 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { IoAddSharp } from "react-icons/io5";
 import { useItem } from "../../../provider/ItemProvider";
 import { useSummary } from "../../../provider/SummaryProvider";
+import useAllServices from "../../../hooks/useAllServices";
 
 const Services = () => {
-    const { services, button, setActiveId, activeId, content, itemSummary, totalAfterDiscount, showInput, setShowInput, serviceTitle, totalVatRate } = useSummary();
-
+    const { button, setActiveId, activeId, content, itemSummary, totalAfterDiscount, showInput, setShowInput, serviceTitle, totalVatRate } = useSummary();
+    const [services] = useAllServices();
     const { addItem, removeItem } = useItem();
     const sectionRefs = useRef({});
     const buttonSliderRefs = useRef({});
@@ -67,7 +69,7 @@ const Services = () => {
                 },
                 {
                     root: null,
-                    rootMargin: '-20% 0px -70% 0px', // Adjust these values as needed
+                    rootMargin: '-20% 0px -70% 0px',
                     threshold: 0.1
                 }
             );

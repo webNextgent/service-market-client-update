@@ -80,14 +80,23 @@ const Navbar = () => {
                                 transition-all duration-200
                                 z-50
                             `}>
-                                <Link
-                                    to={user?.role === 'ADMIN' ? "/dashboard/admin-booking" : "/dashboard/booking"}
-                                    className="block px-4 py-2 rounded-lg hover:bg-gray-100 text-[#01788E]"
-                                    onClick={() => setDropdownOpen(false)}
-                                >
-                                    Dashboard
-                                </Link>
+                                {user?.role === "ADMIN" ? (
+                                    <>
+                                        <Link to="/dashboard/admin-booking" className="block px-4 py-2 rounded-lg hover:bg-gray-100 text-[#01788E]">
+                                            Dashboard
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link to="/dashboard/booking" className="block px-4 py-2 rounded-lg hover:bg-gray-100 text-[#01788E]">
+                                            My Booking
+                                        </Link>
 
+                                        <Link to="/dashboard/profile" className="block px-4 py-2 rounded-lg hover:bg-gray-100 text-[#01788E]">
+                                            My Profile
+                                        </Link>
+                                    </>
+                                )}
                                 <button
                                     className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 text-[#01788E]"
                                     onClick={async () => {
@@ -102,7 +111,6 @@ const Navbar = () => {
                     ) : (
                         <div className="flex items-center gap-2.5">
                             <Link
-                                // to='/login'
                                 onClick={() => setOpenModal(true)}
                                 className="btn bg-white text-[#5D4F52] border shadow-xs font-bold">
                                 Login

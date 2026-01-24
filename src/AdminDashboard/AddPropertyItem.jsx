@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import useDashboardPropertyType from "../hooks/userDashboardPropertyType";
 import { GoBrowser } from "react-icons/go";
+import useAxiosSecure from "../hooks/useAxiosSecure";
+import Swal from "sweetalert2";
 
 const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
@@ -14,6 +16,7 @@ const AddPropertyItem = () => {
     const [propertyItem, refetch] = useDashboardPropertyItem();
     const [propertyType] = useDashboardPropertyType();
     const [loading, setLoading] = useState(false);
+    const axiosSecure = useAxiosSecure();
 
     const { register, handleSubmit, reset, formState: { errors }, setValue } = useForm();
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -72,16 +75,9 @@ const AddPropertyItem = () => {
                     ...data,
                     image: imageUrl,
                 };
-                console.log(finalData?.serviceCharge);
+                const postData = await axiosSecure.post(`/property-items/create`, finalData);
 
-                const postData = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/property-items/create`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(finalData),
-                });
-
-                const postResult = await postData.json();
-                if (postResult.success === true) {
+                if (postData?.data?.success) {
                     toast.success("Property Item added successfully");
                     closeAddModal();
                     refetch();
@@ -140,22 +136,13 @@ const AddPropertyItem = () => {
         }
 
         try {
-            const response = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/property-items/update/${editItem.id}`,
-                {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(finalData),
-                }
-            );
-
-            const result = await response.json();
-            if (result.success) {
+            const res = await axiosSecure.patch(`/property-items/update/${editItem.id}`, finalData);
+            if (res?.data?.success) {
                 toast.success("Property Item updated successfully");
                 closeEditModal();
                 refetch();
             } else {
-                toast.error(result.message || "Failed to update");
+                toast.error(res?.message || "Failed to update");
             }
         } catch (error) {
             toast.error(`Update error: ${error?.message || error}`);
@@ -166,21 +153,27 @@ const AddPropertyItem = () => {
 
     const handelDeleteItem = async (item) => {
         try {
-            const res = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/property-items/delete/${item.id}`,
-                {
-                    method: "DELETE",
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const res = await axiosSecure.delete(`/property-items/delete/${item.id}`)
+                    if (res?.data?.success) {
+                        refetch();
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Property Item deleted successfully",
+                            icon: "success"
+                        });
+                    }
                 }
-            );
-
-            const result = await res.json();
-
-            if (result.success) {
-                toast.success("Property Item deleted successfully");
-                refetch();
-            } else {
-                toast.error("Failed to delete item");
-            }
+            })
         } catch (error) {
             console.error(error);
             toast.error("Something went wrong");

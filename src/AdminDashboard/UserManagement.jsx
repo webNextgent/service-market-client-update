@@ -3,8 +3,7 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import { FaUsers } from "react-icons/fa";
-import { RiDeleteBin5Line, RiEditBoxLine } from "react-icons/ri";
-import { GoBrowser } from "react-icons/go";
+import { RiDeleteBin5Line } from "react-icons/ri";
 
 const UserManagement = () => {
     const axiosSecure = useAxiosSecure();
@@ -93,14 +92,13 @@ const UserManagement = () => {
             if (result.isConfirmed) {
                 try {
                     const resDelete = await axiosSecure.delete(`/auth/delete-account/${user.id}`);
-                    if (resDelete.data.deletedCount > 0) {
+                    if (resDelete?.data?.success) {
                         refetch();
                         Swal.fire({
                             title: "Deleted!",
                             text: `${user.firstName || 'User'} has been deleted.`,
                             icon: "success"
                         });
-                        // toast.success(`${user.firstName || 'User'} has been deleted`);
                     }
                 } catch (err) {
                     console.log(err);
@@ -111,8 +109,7 @@ const UserManagement = () => {
     };
 
 
-    if (isLoading) return <span className="loading loading-spinner text-warning"></span>;
-
+    if (isLoading) return <div className="text-center my-10"><span className="loading loading-spinner text-warning"></span></div>;
     return (
         <div className="border border-[#E5E7EB] px-2 md:px-6 py-4 rounded-lg bg-white w-full max-w-4xl mx-auto">
             <div className="border-b border-[#E5E7EB] pb-3">

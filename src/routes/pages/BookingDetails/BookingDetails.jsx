@@ -13,12 +13,13 @@ import { HiBuildingOffice, HiHome } from "react-icons/hi2";
 import { BsClock, BsTag } from "react-icons/bs";
 import { TbReceipt } from "react-icons/tb";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
 
 export default function BookingDetails() {
     const item = useLoaderData();
-    const [openInstructionsModal, setOpenInstructionsModal] = useState(false);
+    // const [openInstructionsModal, setOpenInstructionsModal] = useState(false);
     const [openModal, setOpenModal] = useState(false);
-    const [instructions, setInstructions] = useState("");
+    // const [instructions, setInstructions] = useState("");
     const [modalAddress, setModalAddress] = useState(false);
     const [modalPrice, setModalPrice] = useState(false);
     const [modalRescudle, setModalRescudle] = useState(false);
@@ -42,11 +43,11 @@ export default function BookingDetails() {
         setModalRescudle(true);
     }
 
-    const handleAddInstructions = () => {
-        console.log("Instructions saved:", instructions);
-        setOpenInstructionsModal(false);
-        setInstructions("");
-    }
+    // const handleAddInstructions = () => {
+    //     console.log("Instructions saved:", instructions);
+    //     setOpenInstructionsModal(false);
+    //     setInstructions("");
+    // }
 
     const handelAddressDetails = item => {
         setModalAddress(true);
@@ -237,10 +238,8 @@ export default function BookingDetails() {
         const bookingId = item?.Data?.id;
 
         if (!bookingId) {
-            alert("Booking ID not found!");
             return false;
         }
-
         const formattedAddress = formatDisplayAddress(selectedType, data);
 
         const updateData = {
@@ -397,38 +396,19 @@ export default function BookingDetails() {
             date: selectedDay,
             time: selectedTime,
         };
+
         try {
-            // const resReshudle = await fetch(
-            //     `${import.meta.env.VITE_BACKEND_API_URL}/booking/userBooking/${bookingId}`,
-            //     {
-            //         method: "PATCH",
-            //         headers: {
-            //             "Content-Type": "application/json",
-            //         },
-            //         body: JSON.stringify(updatedData),
-            //     }
-            // );
-
             const resReshudle = await axiosSecure.patch(`/booking/userBooking/${bookingId}`, updatedData);
-
-
-            console.log("Response status:", resReshudle.status);
-            console.log("Response status text:", resReshudle.statusText);
-
-            const data = await resReshudle.json();
-            console.log("Response data:", data);
-
-            if (resReshudle.ok) {
-                console.log("Reschedule successful:", data);
+            if (resReshudle?.data?.success) {
                 setModalRescudle(false);
-                alert("Booking rescheduled successfully!");
+                toast.success("Booking rescheduled successfully!");
             } else {
-                console.error("Failed:", data);
-                alert(`Failed to reschedule: ${data.message || `Error ${resReshudle.status}`}`);
+                console.error("Failed:", resReshudle);
+                toast.error(`Failed to reschedule: ${resReshudle.message || `Error ${resReshudle.status}`}`);
             }
         } catch (error) {
             console.error("Error:", error);
-            alert("Network error. Please check your connection and try again.");
+            toast.error("Network error. Please check your connection and try again.");
         }
     };
 
@@ -444,27 +424,20 @@ export default function BookingDetails() {
     }, [dateTime, selectedDay]);
 
     const handleUserUpdateBookingStatus = async (id) => {
-        try {
-            const res = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/booking/update/${id}`,
-                {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        status: 'Cancelled'
-                    }),
-                }
-            );
+        const updateData = {
+            status: 'Cancelled'
+        }
 
-            const data = await res.json();
-            if (data.success) {
-                alert("Booking cancelled successfully!");
+        try {
+            const resStatus = await axiosSecure.patch(`/booking/update/${id}`, updateData);
+            if (resStatus?.data?.success) {
+                toast.success("Booking cancelled successfully!");
             } else {
-                alert("Failed to cancel booking");
+                toast.error("Failed to cancel booking");
             }
         } catch (error) {
             console.error("Update error:", error);
-            alert("Something went wrong!");
+            toast.error("Something went wrong!");
         }
     };
 
@@ -674,13 +647,13 @@ export default function BookingDetails() {
                                     <MdCalendarToday className="text-xl" />
                                     <span className="text-sm font-medium">Reschedule</span>
                                 </button>
-                                <button
+                                {/* <button
                                     onClick={() => setOpenInstructionsModal(true)}
                                     className="p-3 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg transition flex flex-col items-center gap-2"
                                 >
                                     <FiMessageCircle className="text-xl" />
                                     <span className="text-sm font-medium">Instructions</span>
-                                </button>
+                                </button> */}
                                 <button
                                     onClick={() => setModalAddressUpdate(true)}
                                     className="p-3 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg transition flex flex-col items-center gap-2"
@@ -739,8 +712,8 @@ export default function BookingDetails() {
                                     <IoIosArrowForward className="text-gray-400" />
                                 </button>
 
-                                <button
-                                    onClick={() => { setOpenModal(false); setOpenInstructionsModal(true); }}
+                                {/* <button
+                                    // onClick={() => { setOpenModal(false); setOpenInstructionsModal(true); }}
                                     className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition"
                                 >
                                     <div className="flex items-center gap-4">
@@ -753,7 +726,7 @@ export default function BookingDetails() {
                                         </div>
                                     </div>
                                     <IoIosArrowForward className="text-gray-400" />
-                                </button>
+                                </button> */}
 
                                 <button
                                     onClick={() => setModalAddressUpdate(true)}
@@ -819,7 +792,7 @@ export default function BookingDetails() {
                 }
 
                 {/* Add Instructions Modal */}
-                {openInstructionsModal &&
+                {/* {openInstructionsModal &&
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-60 backdrop-blur-sm"
                         onClick={() => setOpenInstructionsModal(false)}
                     >
@@ -878,9 +851,7 @@ export default function BookingDetails() {
                             </div>
                         </div>
                     </div>
-                }
-
-                {/* ADDRESS MODAL - View Current Address */}
+                } */}
 
                 {/* ADDRESS MODAL - View Current Address */}
                 {modalAddress &&
@@ -1055,6 +1026,7 @@ export default function BookingDetails() {
                 }
 
                 {/* RESCHEDULE MODAL */}
+                {/* RESCHEDULE MODAL - Updated to match DateTime component */}
                 {modalRescudle &&
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-60 backdrop-blur-sm"
                         onClick={() => setModalRescudle(false)}
@@ -1080,10 +1052,9 @@ export default function BookingDetails() {
 
                             <div className="flex-1 overflow-y-auto p-6">
                                 <div className="space-y-8">
-                                    {/* Day Selector */}
+                                    {/* Day Selector - Updated to match DateTime component */}
                                     <div>
-                                        <h3 className="text-lg font-normal text-gray-900 mb-4 flex items-center gap-2">
-                                            <MdCalendarToday className="text-blue-600" />
+                                        <h3 className="text-lg font-semibold mb-4">
                                             Which day would you like us to come?
                                         </h3>
                                         {isLoading && (
@@ -1093,126 +1064,120 @@ export default function BookingDetails() {
                                             </div>
                                         )}
                                         {availableDays.length === 0 && !isLoading ? (
-                                            <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-xl">
+                                            <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
                                                 <svg className="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                 </svg>
-                                                <p className="text-gray-700 font-medium">No available dates</p>
+                                                <p className="text-gray-600 font-medium">No available dates</p>
                                                 <p className="text-sm text-gray-500 mt-1">Please check back later for available slots</p>
                                             </div>
                                         ) : (
                                             <>
-                                                <div className="relative">
+                                                <div className="relative max-w-[300px] mx-auto md:max-w-4xl">
+                                                    {/* Left Scroll Button */}
                                                     <button
                                                         onClick={() => scroll("left")}
-                                                        className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 bg-white border border-gray-200 rounded-full shadow-md hover:shadow-lg flex items-center justify-center"
+                                                        className="hidden absolute -left-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 md:flex items-center justify-center"
                                                     >
-                                                        <IoIosArrowBack className="text-xl" />
+                                                        <IoIosArrowBack className="text-3xl font-bold" />
                                                     </button>
 
+                                                    {/* Day List */}
                                                     <div
                                                         ref={scrollerRef}
-                                                        className="flex gap-3 overflow-x-auto pb-4 px-10 scrollbar-hide"
+                                                        className="flex gap-3 overflow-x-auto no-scrollbar py-2 px-10"
                                                     >
                                                         {availableDays.map((day, index) => {
                                                             const isActive = selectedDay === day.date;
+
                                                             return (
-                                                                <button
+                                                                <div
                                                                     key={`${day.date}-${index}`}
                                                                     onClick={() => setSelectedDay(day.date)}
-                                                                    className={`min-w-[100px] px-4 py-4 rounded-xl border border-gray-300 flex flex-col items-center gap-1 transition-all duration-200 text-gray-800 ${isActive
-                                                                        ? "bg-[#B2D7DE]"
-                                                                        : "bg-white"
-                                                                        }`}
+                                                                    className={`snap-start min-w-[100px] md:min-w-[85px] px-2 py-1 rounded-lg border cursor-pointer flex flex-col items-center gap-1 transition
+                                                        ${isActive ? "bg-[#B2D7DE] border-transparent shadow" : "bg-white border-gray-200 hover:bg-gray-50"}
+                                                    `}
                                                                 >
-                                                                    <div className={`text-sm ${isActive ? "text-blue-100" : "text-gray-600"}`}>
-                                                                        {day.short}
-                                                                    </div>
-                                                                    <div className={`font-semibold ${isActive ? "text-white" : "text-gray-900"}`}>
-                                                                        {day.label}
-                                                                    </div>
-                                                                    {/* {day.timeSlots && day.timeSlots.length > 0 && (
-                                                                        <div className={`text-xs mt-1 ${isActive ? "text-blue-100" : "text-green-600"}`}>
+                                                                    <div className="text-sm text-gray-600">{day.short}</div>
+                                                                    <div className="text-sm font-medium">{day.label}</div>
+                                                                    {day.timeSlots && day.timeSlots.length > 0 && (
+                                                                        <div className="text-xs text-green-600 mt-1">
                                                                             {day.timeSlots.length} slot{day.timeSlots.length !== 1 ? 's' : ''}
                                                                         </div>
-                                                                    )} */}
-                                                                </button>
+                                                                    )}
+                                                                </div>
                                                             );
                                                         })}
                                                     </div>
 
+                                                    {/* Right Scroll Button */}
                                                     <button
                                                         onClick={() => scroll("right")}
-                                                        className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 bg-white border border-gray-200 rounded-full shadow-md hover:shadow-lg flex items-center justify-center"
+                                                        className="hidden absolute right-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 md:flex items-center justify-center cursor-pointer"
                                                     >
-                                                        <IoIosArrowForward className="text-xl" />
+                                                        <IoIosArrowForward className="text-3xl font-bold" />
                                                     </button>
                                                 </div>
                                             </>
                                         )}
                                     </div>
 
-                                    {/* Time Selector */}
+                                    {/* Time Selector - Updated to match DateTime component */}
                                     {selectedDay && (
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                                <BsClock className="text-blue-600" />
-                                                Select Time Slot
+                                        <>
+                                            <h3 className="text-lg font-semibold mt-8 mb-4">
+                                                What time would you like us to arrive?
                                             </h3>
 
                                             {availableTimes.length === 0 ? (
-                                                <div className="text-center py-6 border-2 border-dashed border-gray-300 rounded-xl">
+                                                <div className="text-center py-6 border-2 border-dashed border-gray-300 rounded-lg">
                                                     <svg className="w-10 h-10 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                     </svg>
-                                                    <p className="text-gray-700">No time slots available for this date</p>
-                                                    <p className="text-sm text-gray-500">Please select another date</p>
+                                                    <p className="text-gray-600">No time slots available for this date</p>
                                                 </div>
                                             ) : (
-                                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                     {availableTimes.map((timeSlot, index) => (
                                                         <button
                                                             key={index}
                                                             onClick={() => setSelectedTime(timeSlot)}
-                                                            className={`p-4 rounded-xl border transition-all duration-200 text-center ${selectedTime === timeSlot
-                                                                ? "bg-gradient-to-br from-green-500 to-green-600 text-white border-transparent shadow-lg"
-                                                                : "bg-white border-gray-200 hover:bg-gray-50 hover:shadow-md"
-                                                                }`}
+                                                            className={`w-full text-left rounded-lg border px-6 py-4 transition
+                                                ${selectedTime === timeSlot ? "bg-[#E6F6F6] border-teal-300 shadow-sm" : "bg-white border-gray-200 hover:bg-gray-50"}
+                                            `}
                                                         >
-                                                            <span className="font-medium">{timeSlot}</span>
+                                                            <span className="text-sm font-medium">{timeSlot}</span>
                                                         </button>
                                                     ))}
                                                 </div>
                                             )}
-                                        </div>
+                                        </>
                                     )}
 
-                                    {/* Note Section */}
-                                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                                        <div className="flex gap-3">
-                                            <div className="flex-shrink-0">
-                                                <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                            </div>
-                                            <div>
-                                                <h4 className="font-medium text-amber-900 mb-1">Important Note</h4>
-                                                <p className="text-sm text-amber-800">
-                                                    We cannot guarantee the availability of the selected or preferred technician once the date/time of service is changed or any other changes are requested.
-                                                </p>
-                                            </div>
+                                    {/* Note Section - Updated to match DateTime component */}
+                                    <div className="mt-8 p-4 bg-gray-50 border rounded-md flex gap-4 text-sm text-gray-700">
+                                        <svg className="w-5 h-5 text-gray-500 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M12 9v2m0 4h.01M21 12A9 9 0 1112 3a9 9 0 019 9z" strokeWidth="1.5" />
+                                        </svg>
+
+                                        <div>
+                                            Free cancellation up to 6 hours before your booking start time.{" "}
+                                            <a href="#" className="text-teal-600 underline">View cancellation policy</a>
                                         </div>
                                     </div>
 
-                                    {/* Confirm Button */}
-                                    <div className="sticky bottom-0 bg-white pt-4 border-t">
+                                    {/* Confirm Button - Updated styling */}
+                                    <div className="sticky bottom-0 bg-white pt-6 border-t">
                                         <button
                                             onClick={() => handleRescheduleSubmit(item.Data.id)}
                                             disabled={!selectedDay || !selectedTime}
-                                            className="w-full py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition shadow-lg hover:shadow-xl"
+                                            className={`w-full py-4 text-white font-semibold rounded-lg transition ${!selectedDay || !selectedTime
+                                                ? "bg-gray-400 cursor-not-allowed"
+                                                : "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-xl"
+                                                }`}
                                         >
                                             {selectedDay && selectedTime ? (
-                                                `Reschedule to ${selectedDay} at ${selectedTime}`
+                                                `Confirm Reschedule`
                                             ) : (
                                                 "Select date and time to continue"
                                             )}
@@ -1392,7 +1357,7 @@ export default function BookingDetails() {
                                             <LuArrowLeft className="text-xl" />
                                         </button>
                                         <div>
-                                            <h2 className="text-xl font-bold text-gray-900">Update Address</h2>
+                                            <h2 className="text-xl font-semibold text-gray-900">Update Address</h2>
                                             <p className="text-gray-600">Update your service location details</p>
                                         </div>
                                     </div>
@@ -1400,189 +1365,151 @@ export default function BookingDetails() {
                             </div>
 
                             <div className="flex-1 overflow-y-auto p-6">
-                                <div className="space-y-6">
-                                    {/* Property Type Selection */}
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Property Type</h3>
-                                        <div className="flex flex-wrap gap-3">
-                                            {propertyTypes.map((type) => (
-                                                <button
-                                                    key={type}
-                                                    onClick={() => handleTypeChange(type)}
-                                                    type="button"
-                                                    className={`px-5 py-3 rounded-xl border transition-all duration-200 ${selectedType === type
-                                                        ? "bg-gradient-to-r from-teal-600 to-teal-700 text-white border-transparent shadow-lg"
-                                                        : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50 hover:shadow-md"
-                                                        }`}
-                                                >
-                                                    <div className="flex items-center gap-2">
-                                                        {type === "Apartment" && <HiBuildingOffice className="text-lg" />}
-                                                        {type === "Villa" && <HiHome className="text-lg" />}
-                                                        {type === "Office" && <HiBuildingOffice className="text-lg" />}
-                                                        {type === "Other" && <MdLocationOn className="text-lg" />}
-                                                        <span className="font-medium">{type}</span>
-                                                    </div>
-                                                </button>
-                                            ))}
-                                        </div>
+                                <form onSubmit={handleSubmit(handleAddressUpdate)} className="space-y-6">
+                                    {/* TYPE BUTTONS - Updated to match Address component */}
+                                    <div className="flex space-x-3 mb-6 overflow-x-auto">
+                                        {propertyTypes.map(btn => (
+                                            <button
+                                                key={btn}
+                                                onClick={() => handleTypeChange(btn)}
+                                                type="button"
+                                                className={`flex items-center px-4 py-2 rounded-full transition duration-300 border cursor-pointer
+                                    ${selectedType === btn ? "bg-teal-600 text-white shadow-md" : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"}`}
+                                            >
+                                                {btn}
+                                            </button>
+                                        ))}
                                     </div>
 
-                                    {/* Form */}
-                                    <form onSubmit={handleSubmit(handleAddressUpdate)} className="space-y-6">
-                                        {/* Common Fields */}
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div>
-                                                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                                    City *
-                                                </label>
-                                                <input
-                                                    {...register("city", { required: "City is required" })}
-                                                    type="text"
-                                                    placeholder="Enter City"
-                                                    className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900"
-                                                />
-                                                {errors.city && <p className="text-red-600 text-sm mt-2">{errors.city.message}</p>}
-                                            </div>
+                                    {/* FORM FIELDS - Updated to match Address component */}
+                                    <div className="space-y-6">
+                                        {/* City */}
+                                        <div>
+                                            <label className="block text-gray-700 font-medium mb-1">City</label>
+                                            <input
+                                                {...register("city", { required: "City is required" })}
+                                                type="text"
+                                                placeholder="Enter City"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                            />
+                                            {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>}
+                                        </div>
 
-                                            <div>
-                                                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                                    Area *
-                                                </label>
-                                                <input
-                                                    {...register("area", { required: "Area is required" })}
-                                                    type="text"
-                                                    placeholder="Enter Area"
-                                                    className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900"
-                                                />
-                                                {errors.area && <p className="text-red-600 text-sm mt-2">{errors.area.message}</p>}
-                                            </div>
+                                        {/* Area */}
+                                        <div>
+                                            <label className="block text-gray-700 font-medium mb-1">Area</label>
+                                            <input
+                                                {...register("area", { required: "Area is required" })}
+                                                type="text"
+                                                placeholder="Enter Area"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                            />
+                                            {errors.area && <p className="text-red-500 text-sm mt-1">{errors.area.message}</p>}
                                         </div>
 
                                         {/* Dynamic Fields based on Property Type */}
                                         {selectedType === "Villa" && (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <>
                                                 <div>
-                                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                                        Community / Street Name *
-                                                    </label>
+                                                    <label className="block text-gray-700 font-medium mb-1">Community / Street Name</label>
                                                     <input
                                                         {...register("community", { required: "Community is required" })}
                                                         type="text"
                                                         placeholder="Enter Community / Street Name"
-                                                        className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                                                     />
-                                                    {errors.community && <p className="text-red-600 text-sm mt-2">{errors.community.message}</p>}
+                                                    {errors.community && <p className="text-red-500 text-sm mt-1">{errors.community.message}</p>}
                                                 </div>
                                                 <div>
-                                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                                        Villa No *
-                                                    </label>
+                                                    <label className="block text-gray-700 font-medium mb-1">Villa No</label>
                                                     <input
                                                         {...register("villaNo", { required: "Villa number is required" })}
                                                         type="text"
                                                         placeholder="Enter Villa Number"
-                                                        className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                                                     />
-                                                    {errors.villaNo && <p className="text-red-600 text-sm mt-2">{errors.villaNo.message}</p>}
+                                                    {errors.villaNo && <p className="text-red-500 text-sm mt-1">{errors.villaNo.message}</p>}
                                                 </div>
-                                            </div>
+                                            </>
                                         )}
 
                                         {selectedType === "Other" && (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                {/* <div>
-                                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                                        Nickname *
-                                                    </label>
-                                                    <input
-                                                        {...register("nickname", { required: "Nickname is required" })}
-                                                        type="text"
-                                                        placeholder="Enter Nickname"
-                                                        className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                                    />
-                                                    {errors.nickname && <p className="text-red-600 text-sm mt-2">{errors.nickname.message}</p>}
-                                                </div> */}
+                                            <>
                                                 <div>
-                                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                                        Street / Building Name *
-                                                    </label>
+                                                    <label className="block text-gray-700 font-medium mb-1">Street / Building Name</label>
                                                     <input
                                                         {...register("streetName", { required: "Street/Building name is required" })}
                                                         type="text"
                                                         placeholder="Enter Street / Building Name"
-                                                        className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                                                     />
-                                                    {errors.streetName && <p className="text-red-600 text-sm mt-2">{errors.streetName.message}</p>}
+                                                    {errors.streetName && <p className="text-red-500 text-sm mt-1">{errors.streetName.message}</p>}
                                                 </div>
                                                 <div>
-                                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                                        Apartment / Villa No *
-                                                    </label>
+                                                    <label className="block text-gray-700 font-medium mb-1">Apartment / Villa No</label>
                                                     <input
                                                         {...register("otherNo", { required: "Apartment/Villa number is required" })}
                                                         type="text"
                                                         placeholder="Enter Apartment / Villa No"
-                                                        className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                                                     />
-                                                    {errors.otherNo && <p className="text-red-600 text-sm mt-2">{errors.otherNo.message}</p>}
+                                                    {errors.otherNo && <p className="text-red-500 text-sm mt-1">{errors.otherNo.message}</p>}
                                                 </div>
-                                            </div>
+                                            </>
                                         )}
 
                                         {selectedType !== "Villa" && selectedType !== "Other" && (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <>
                                                 <div>
-                                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                                        Building Name *
-                                                    </label>
+                                                    <label className="block text-gray-700 font-medium mb-1">Building Name</label>
                                                     <input
                                                         {...register("buildingName", { required: "Building name is required" })}
                                                         type="text"
                                                         placeholder="Enter Building Name"
-                                                        className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                                                     />
-                                                    {errors.buildingName && <p className="text-red-600 text-sm mt-2">{errors.buildingName.message}</p>}
+                                                    {errors.buildingName && <p className="text-red-500 text-sm mt-1">{errors.buildingName.message}</p>}
                                                 </div>
                                                 <div>
-                                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                                        Apartment No *
-                                                    </label>
+                                                    <label className="block text-gray-700 font-medium mb-1">Apartment No</label>
                                                     <input
                                                         {...register("apartmentNo", { required: "Apartment number is required" })}
                                                         type="text"
                                                         placeholder="Enter Apartment No"
-                                                        className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                                                     />
-                                                    {errors.apartmentNo && <p className="text-red-600 text-sm mt-2">{errors.apartmentNo.message}</p>}
+                                                    {errors.apartmentNo && <p className="text-red-500 text-sm mt-1">{errors.apartmentNo.message}</p>}
                                                 </div>
-                                            </div>
+                                            </>
                                         )}
 
                                         {/* Submit Buttons */}
-                                        <div className="flex gap-4 pt-6 border-t">
-                                            <button
-                                                type="button"
-                                                onClick={() => setModalAddressUpdate(false)}
-                                                className="flex-1 px-6 py-3.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-semibold transition"
-                                                disabled={isUpdatingAddress}
-                                            >
-                                                Cancel
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                className="flex-1 px-6 py-3.5 text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                                disabled={isUpdatingAddress}
-                                            >
-                                                {isUpdatingAddress ? (
-                                                    <span className="flex items-center justify-center">
-                                                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                                                        Updating Address...
-                                                    </span>
-                                                ) : "Update Address"}
-                                            </button>
+                                        <div className="pt-6 border-t">
+                                            <div className="flex gap-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setModalAddressUpdate(false)}
+                                                    className="flex-1 px-6 py-3.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition"
+                                                    disabled={isUpdatingAddress}
+                                                >
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    type="submit"
+                                                    className="flex-1 px-6 py-3.5 text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-lg font-medium transition shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                                    disabled={isUpdatingAddress}
+                                                >
+                                                    {isUpdatingAddress ? (
+                                                        <span className="flex items-center justify-center gap-2">
+                                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                                            Updating...
+                                                        </span>
+                                                    ) : "Update Address"}
+                                                </button>
+                                            </div>
                                         </div>
-                                    </form>
-                                </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>

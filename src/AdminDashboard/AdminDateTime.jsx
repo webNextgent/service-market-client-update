@@ -7,6 +7,8 @@ import { FiCalendar, FiClock, FiTrash2 } from "react-icons/fi";
 import { BsClock } from "react-icons/bs";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import useAxiosSecure from "../hooks/useAxiosSecure";
+import Swal from "sweetalert2";
 
 // Helper functions outside component
 const convertTo24Hour = (time12h) => {
@@ -21,15 +23,6 @@ const convertTo24Hour = (time12h) => {
     return `${hour.toString().padStart(2, '0')}:${minutes}`;
 };
 
-// const convertTo12Hour = (time24h) => {
-//     if (!time24h) return "";
-//     const [hours, minutes] = time24h.split(':');
-//     const hour = parseInt(hours, 10);
-//     const ampm = hour >= 12 ? 'PM' : 'AM';
-//     const hour12 = hour % 12 || 12;
-//     return `${hour12}:${minutes} ${ampm}`;
-// };
-
 const AdminDateTime = () => {
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
@@ -37,6 +30,7 @@ const AdminDateTime = () => {
     const [appliedRecords, setAppliedRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState({ index: null, type: null });
+    const axiosSecure = useAxiosSecure();
 
     const addSlot = () => {
         setTimeSlots([...timeSlots, { start: "", end: "" }]);
@@ -125,23 +119,16 @@ const AdminDateTime = () => {
         const payload = {
             startDate: startDate,
             endDate: endDate,
-            timeSlots: formattedSlots, // 12-hour format এ পাঠানো
+            timeSlots: formattedSlots,
         };
 
         console.log("Sending payload (12-hour format):", payload);
 
         setIsLoading(true);
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/date-time/create`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
+            const res = await axiosSecure.post('/date-time/create', payload);
 
-            const data = await response.json();
-            console.log("API Response:", data);
-
-            if (data.success) {
+            if (res?.data?.success) {
                 toast.success('Time slots added successfully');
                 // Reset form
                 setFromDate(null);
@@ -150,7 +137,7 @@ const AdminDateTime = () => {
                 // Refresh data
                 fetchDateTimeData();
             } else {
-                toast.error(data.message || "Failed to add time slots");
+                toast.error(res?.message || "Failed to add time slots");
             }
         } catch (error) {
             console.error("Error sending data:", error);
@@ -162,16 +149,10 @@ const AdminDateTime = () => {
 
     const fetchDateTimeData = async () => {
         try {
-            console.log("Fetching data from API...");
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/date-time`);
-            const data = await response.json();
-            console.log("Fetched data:", data);
+            const res = await axiosSecure.get(`/date-time`);
 
-            if (data.success) {
-                setAppliedRecords(data.Data || []);
-                console.log("Applied records set:", data.Data);
-            } else {
-                console.error("API returned error:", data.message);
+            if (res?.data?.success) {
+                setAppliedRecords(res?.data?.Data || []);
             }
         } catch (error) {
             console.error("GET Error:", error);
@@ -179,22 +160,31 @@ const AdminDateTime = () => {
     };
 
     const deleteTimeSlot = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this configuration?")) {
-            return;
-        }
-
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/date-time/delete/${id}`, {
-                method: "DELETE",
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                toast.success("Configuration deleted");
-                fetchDateTimeData();
-            } else {
-                toast.error(data.message || "Failed to delete");
-            }
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const res = await axiosSecure.delete(`/date-time/delete/${id}`);
+                        if (res?.data?.success) {
+                            toast.success("Configuration deleted");
+                            fetchDateTimeData();
+                        } else {
+                            toast.error(res?.message || "Failed to delete");
+                        }
+                    } catch (err) {
+                        console.log(err);
+                        toast.error('Something was wrong');
+                    }
+                }
+            })
         } catch (error) {
             console.error("Delete Error:", error);
             toast.error("Failed to delete");
@@ -366,7 +356,7 @@ const AdminDateTime = () => {
                                 <GoBrowser className="text-xl text-white" />
                             </div>
                             <div>
-                                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Date & Time Management</h1>
+                                <h1 className="text-2xl md:text-3xl font-font-semibold text-gray-900">Date & Time Management</h1>
                                 <p className="text-gray-600 mt-1">Configure available time slots for appointments</p>
                             </div>
                         </div>
@@ -394,7 +384,7 @@ const AdminDateTime = () => {
                                     <div className="p-2 bg-blue-100 rounded-lg">
                                         <MdDateRange className="text-lg text-blue-600" />
                                     </div>
-                                    <h2 className="text-xl font-semibold text-gray-900">Configure Time Slots</h2>
+                                    <h2 className="text-xl font-semifont-semibold text-gray-900">Configure Time Slots</h2>
                                 </div>
                             </div>
 
@@ -624,7 +614,7 @@ const AdminDateTime = () => {
                                     <button
                                         onClick={handleApply}
                                         disabled={isLoading || timeSlots.length === 0 || !fromDate || !toDate}
-                                        className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                                        className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semifont-semibold rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                                     >
                                         {isLoading ? (
                                             <>
@@ -649,7 +639,7 @@ const AdminDateTime = () => {
                     <div className="space-y-6">
                         {/* Stats Card */}
                         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Overview</h3>
+                            <h3 className="text-lg font-semifont-semibold text-gray-900 mb-4">Quick Overview</h3>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-blue-100">
                                     <div className="flex items-center gap-3">
@@ -658,7 +648,7 @@ const AdminDateTime = () => {
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-600">Selected Range</p>
-                                            <p className="font-semibold text-gray-900">
+                                            <p className="font-semifont-semibold text-gray-900">
                                                 {fromDate && toDate ? (
                                                     <>
                                                         {fromDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {toDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -678,7 +668,7 @@ const AdminDateTime = () => {
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-600">Time Slots</p>
-                                            <p className="font-semibold text-gray-900">{timeSlots.length} slots</p>
+                                            <p className="font-semifont-semibold text-gray-900">{timeSlots.length} slots</p>
                                         </div>
                                     </div>
                                 </div>
@@ -690,7 +680,7 @@ const AdminDateTime = () => {
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-600">Total Days</p>
-                                            <p className="font-semibold text-gray-900">
+                                            <p className="font-semifont-semibold text-gray-900">
                                                 {fromDate && toDate ? (
                                                     Math.ceil((toDate - fromDate) / (1000 * 60 * 60 * 24)) + 1
                                                 ) : 0} days
@@ -704,7 +694,7 @@ const AdminDateTime = () => {
                         {/* Preview Slots */}
                         {timeSlots.length > 0 && (
                             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">Preview (12-hour format)</h3>
+                                <h3 className="text-lg font-semifont-semibold text-gray-900 mb-4">Preview (12-hour format)</h3>
                                 <div className="space-y-3">
                                     {timeSlots.map((slot, index) => (
                                         <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
@@ -739,7 +729,7 @@ const AdminDateTime = () => {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                         </svg>
                                     </div>
-                                    <h2 className="text-xl font-semibold text-gray-900">Configured Time Slots (12-hour format)</h2>
+                                    <h2 className="text-xl font-semifont-semibold text-gray-900">Configured Time Slots (12-hour format)</h2>
                                 </div>
                                 <div className="text-sm text-gray-600">
                                     Showing {groupedDates.length} dates
@@ -751,25 +741,25 @@ const AdminDateTime = () => {
                             <table className="w-full">
                                 <thead>
                                     <tr className="bg-gray-50">
-                                        <th className="py-4 px-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b">
+                                        <th className="py-4 px-6 text-left text-xs font-semifont-semibold text-gray-600 uppercase tracking-wider border-b">
                                             <div className="flex items-center gap-2">
                                                 <FiCalendar className="text-gray-500" />
                                                 Date
                                             </div>
                                         </th>
-                                        <th className="py-4 px-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b">
+                                        <th className="py-4 px-6 text-left text-xs font-semifont-semibold text-gray-600 uppercase tracking-wider border-b">
                                             <div className="flex items-center gap-2">
                                                 <BsClock className="text-gray-500" />
                                                 Time Slots
                                             </div>
                                         </th>
-                                        <th className="py-4 px-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b">
+                                        <th className="py-4 px-6 text-left text-xs font-semifont-semibold text-gray-600 uppercase tracking-wider border-b">
                                             Total
                                         </th>
-                                        <th className="py-4 px-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b">
+                                        <th className="py-4 px-6 text-left text-xs font-semifont-semibold text-gray-600 uppercase tracking-wider border-b">
                                             Status
                                         </th>
-                                        <th className="py-4 px-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b">
+                                        <th className="py-4 px-6 text-left text-xs font-semifont-semibold text-gray-600 uppercase tracking-wider border-b">
                                             Actions
                                         </th>
                                     </tr>
@@ -779,7 +769,7 @@ const AdminDateTime = () => {
                                         <tr key={index} className="hover:bg-gray-50/50 transition-colors">
                                             <td className="py-4 px-6">
                                                 <div className="space-y-1">
-                                                    <div className="text-sm font-semibold text-gray-900">
+                                                    <div className="text-sm font-semifont-semibold text-gray-900">
                                                         {item.fullDate}
                                                     </div>
                                                     <div className="text-xs text-gray-500">
@@ -845,7 +835,7 @@ const AdminDateTime = () => {
                         <div className="w-20 h-20 mx-auto mb-5 bg-gradient-to-br from-blue-50 to-blue-100 rounded-full flex items-center justify-center">
                             <MdAccessTime className="text-4xl text-blue-400" />
                         </div>
-                        <h4 className="text-xl font-semibold text-gray-700 mb-2">No Time Slots Configured</h4>
+                        <h4 className="text-xl font-semifont-semibold text-gray-700 mb-2">No Time Slots Configured</h4>
                         <p className="text-gray-500 max-w-md mx-auto mb-6">
                             Configure your first date range and time slots to get started
                         </p>
@@ -864,7 +854,7 @@ const AdminDateTime = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                                 </svg>
                             </div>
-                            <h3 className="text-lg font-semibold text-yellow-800">Data Format Issue</h3>
+                            <h3 className="text-lg font-semifont-semibold text-yellow-800">Data Format Issue</h3>
                         </div>
                         <p className="text-yellow-700 mb-3">
                             Data is available from API but couldn't be displayed properly. Check the console for details.

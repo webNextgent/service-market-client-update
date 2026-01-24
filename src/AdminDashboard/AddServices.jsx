@@ -6,7 +6,8 @@ import { RiEditBoxLine } from "react-icons/ri";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import EditModal from "../components/EditModal/EditModal";
 import { GoBrowser } from "react-icons/go";
-
+import useAxiosSecure from "../hooks/useAxiosSecure";
+import Swal from "sweetalert2";
 
 
 const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
@@ -19,7 +20,7 @@ const AddServices = () => {
     const [selectedService, setSelectedService] = useState(null);
     const [isModalOpenAdd, setIsModalOpenAdd] = useState(false);
     const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
-
+    const axiosSecure = useAxiosSecure();
 
     const handleFormSubmit = async (data) => {
         setLoading(true);
@@ -39,15 +40,8 @@ const AddServices = () => {
                     ...data,
                     image: imageUrl,
                 };
-
-                const postData = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/service/create`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(finalData),
-                });
-
-                const postResult = await postData.json();
-                if (postResult.success === true) {
+                const postData = await axiosSecure.post('/service/create', finalData);
+                if ((postData?.data?.success)) {
                     toast.success("Service added successfully");
                     setIsModalOpenAdd(false);
                     refetch();
@@ -67,21 +61,27 @@ const AddServices = () => {
 
     const handelDelete = async (service) => {
         try {
-            const res = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/service/delete/${service.id}`,
-                {
-                    method: "DELETE",
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const res = await axiosSecure.delete(`/service/delete/${service.id}`);
+                    if (res?.data?.success) {
+                        refetch();
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Service deleted successfully",
+                            icon: "success"
+                        });
+                    }
                 }
-            );
-
-            const result = await res.json();
-
-            if (result.success) {
-                toast.success("Service deleted successfully");
-                refetch(); // list reload
-            } else {
-                toast.error("Failed to delete service");
-            }
+            })
         } catch (error) {
             console.error(error);
             toast.error("Something went wrong");
@@ -294,8 +294,6 @@ const AddServices = () => {
                 </div>
 
             )}
-
-            {/* edit service  */}
             {isModalOpenEdit && (
                 <EditModal
                     service={selectedService}

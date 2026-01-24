@@ -1,51 +1,42 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { Tag, Calendar, X, ArrowRight, Sparkles, CheckCircle, Clock, Plus, Trash2, Edit2, Copy, Percent } from 'lucide-react';
+import useAxiosSecure from '../hooks/useAxiosSecure';
+import Swal from 'sweetalert2';
+import toast from 'react-hot-toast';
+import { useQuery } from '@tanstack/react-query';
 
 const AddPromoCode = () => {
-    const [promoCode, setPromoCode] = useState('');
     const [expiryDate, setExpiryDate] = useState('');
     const [discount, setDiscount] = useState('');
-    const [promoCodes, setPromoCodes] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [promoCode, setPromoCode] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [editingId, setEditingId] = useState(null);
     const [editData, setEditData] = useState({ code: '', expiryDate: '', discount: '' });
+    const axiosSecure = useAxiosSecure();
 
-    useEffect(() => {
-        fetchPromoCodes();
-    }, []);
 
-    const fetchPromoCodes = async () => {
-        setIsLoading(true);
-        try {
-            const response = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/promo-code`
-            );
+    const { data: promoCodes = [], isLoading, refetch } = useQuery({
+        queryKey: ["promo-codes"],
+        queryFn: async () => {
+            const response = await axiosSecure.get("/promo-code");
 
-            const data = await response.json();
+            if (!response?.data?.Data) return [];
 
-            if (data.success) {
-                // Date গুলোকে সঠিক ফরম্যাটে নিয়ে আসি
-                const processedData = data.Data.map(promo => ({
-                    ...promo,
-                    expiryDate: promo.expiryDate ?
-                        new Date(promo.expiryDate).toISOString().split('T')[0] :
-                        null,
-                    createdAt: promo.createdAt ?
-                        new Date(promo.createdAt).toISOString() :
-                        new Date().toISOString()
-                }));
-                setPromoCodes(processedData || []);
-            }
-        } catch (err) {
-            setError('Failed to load promo codes');
-            console.error('Error loading promo codes:', err);
-        } finally {
-            setIsLoading(false);
+            return response.data.Data.map(promo => ({
+                ...promo,
+                expiryDate: promo.expiryDate
+                    ? new Date(promo.expiryDate).toISOString().split("T")[0]
+                    : null,
+                createdAt: promo.createdAt
+                    ? new Date(promo.createdAt).toISOString()
+                    : new Date().toISOString()
+            }));
         }
-    };
+    });
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -71,28 +62,18 @@ const AddPromoCode = () => {
         };
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/promo-code/create`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(promoData),
-            });
+            const resPromo = await axiosSecure.post(`/promo-code/create`, promoData);
 
-            const data = await response.json();
-            console.log(data);
+            console.log(resPromo);
 
-            if (data.success) {
-                setSuccess('Promo code added successfully!');
-                setPromoCode('');
-                setExpiryDate('');
-                setDiscount('');
-                fetchPromoCodes();
-
-                setTimeout(() => setSuccess(''), 3000);
-            } else {
-                setError(data.message || 'Failed to add promo code');
+            if (resPromo?.data?.success) {
+                setSuccess("Promo code added successfully!");
+                setPromoCode("");
+                setExpiryDate("");
+                setDiscount("");
+                refetch();
             }
+
             // eslint-disable-next-line no-unused-vars
         } catch (err) {
             setError('Network error. Please try again.');
@@ -102,22 +83,33 @@ const AddPromoCode = () => {
     };
 
     const handleDelete = async (promo) => {
-        if (!confirm('Are you sure you want to delete this promo code?')) {
-            return;
-        }
-
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/promo-code/delete/${promo.id}`, {
-                method: 'DELETE',
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const resPromo = await axiosSecure.delete(`/promo-code/delete/${promo.id}`);
+                        if (resPromo?.data?.success) {
+                            if (resPromo?.data?.success) {
+                                toast.success("Promo code deleted");
+                                refetch();
+                            }
+                            setSuccess('Promo code deleted successfully');
+                            setTimeout(() => setSuccess(''), 3000);
+                        }
+                    } catch (err) {
+                        console.log(err);
+                        toast.error('Something was wrong');
+                    }
+                }
             });
-
-            const data = await response.json();
-            if (data.success) {
-                setPromoCodes(promoCodes.filter(code => code._id !== promo?.id));
-                setSuccess('Promo code deleted successfully');
-                setTimeout(() => setSuccess(''), 3000);
-            }
-            // eslint-disable-next-line no-unused-vars
         } catch (err) {
             setError('Failed to delete promo code');
         }
@@ -132,44 +124,42 @@ const AddPromoCode = () => {
         });
     };
 
-    const handleUpdate = async () => {
-        if (!editData.code.trim()) {
-            setError('Please enter a promo code');
-            return;
-        }
+    // const handleUpdate = async () => {
+    //     if (!editData.code.trim()) {
+    //         setError('Please enter a promo code');
+    //         return;
+    //     }
 
-        if (!editData.discount || isNaN(editData.discount) || parseFloat(editData.discount) <= 0) {
-            setError('Please enter a valid discount amount');
-            return;
-        }
+    //     if (!editData.discount || isNaN(editData.discount) || parseFloat(editData.discount) <= 0) {
+    //         setError('Please enter a valid discount amount');
+    //         return;
+    //     }
 
-        try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/promo-code/${editingId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    code: editData.code.toUpperCase(),
-                    expiryDate: editData.expiryDate || null,
-                    discount: parseFloat(editData.discount)
-                }),
-            });
+    //     try {
+    //         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/promo-code/${editingId}`, {
+    //             method: 'PUT',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 code: editData.code.toUpperCase(),
+    //                 expiryDate: editData.expiryDate || null,
+    //                 discount: parseFloat(editData.discount)
+    //             }),
+    //         });
 
-            const data = await response.json();
-            if (data.success) {
-                setSuccess('Promo code updated successfully!');
-                setEditingId(null);
-                fetchPromoCodes();
-                setTimeout(() => setSuccess(''), 3000);
-            } else {
-                setError(data.message || 'Failed to update promo code');
-            }
-            // eslint-disable-next-line no-unused-vars
-        } catch (err) {
-            setError('Network error. Please try again.');
-        }
-    };
+    //         const data = await response.json();
+    //         if (data.success) {
+    //             setSuccess("Promo code updated successfully!");
+    //             setEditingId(null);
+    //             refetch();
+    //         }
+
+    //         // eslint-disable-next-line no-unused-vars
+    //     } catch (err) {
+    //         setError('Network error. Please try again.');
+    //     }
+    // };
 
     const handleCopyCode = (code) => {
         navigator.clipboard.writeText(code);
@@ -257,7 +247,7 @@ const AddPromoCode = () => {
                     <Sparkles className="w-4 h-4 text-blue-600" />
                     <span className="text-sm font-medium text-blue-700">Promotion Management</span>
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2">
                     Promo Code Dashboard
                 </h1>
                 <p className="text-gray-600 max-w-lg mx-auto">
@@ -277,7 +267,7 @@ const AddPromoCode = () => {
                             )}
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold text-gray-900">
+                            <h2 className="text-xl font-semibold text-gray-900">
                                 {editingId ? 'Edit Promo Code' : 'Create New Promo'}
                             </h2>
                             <p className="text-gray-500 text-sm">
@@ -286,7 +276,11 @@ const AddPromoCode = () => {
                         </div>
                     </div>
 
-                    <form onSubmit={editingId ? (e) => { e.preventDefault(); handleUpdate(); } : handleSubmit} className="space-y-5">
+                    <form
+                        onSubmit={editingId ? (e) => {
+                            e.preventDefault();
+                            //  handleUpdate();
+                        } : handleSubmit} className="space-y-5">
                         <div className="space-y-4">
                             {/* Promo Code Input */}
                             <div>
@@ -455,7 +449,7 @@ const AddPromoCode = () => {
                                 <Tag className="w-5 h-5 text-white" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold text-gray-900">All Promo Codes</h2>
+                                <h2 className="text-xl font-semibold text-gray-900">All Promo Codes</h2>
                                 <p className="text-gray-500 text-sm">Manage your existing promotional codes</p>
                             </div>
                         </div>
@@ -464,7 +458,7 @@ const AddPromoCode = () => {
                                 {promoCodes.length} total
                             </span>
                             <button
-                                onClick={fetchPromoCodes}
+                                onClick={refetch}
                                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                                 title="Refresh"
                             >
@@ -520,7 +514,7 @@ const AddPromoCode = () => {
 
                                                 <div className="flex-1">
                                                     <div className="flex flex-wrap items-center gap-2 mb-2">
-                                                        <span className="text-lg font-bold text-gray-900">
+                                                        <span className="text-lg font-semibold text-gray-900">
                                                             {promo.code}
                                                         </span>
                                                         <div className="flex items-center gap-2">
@@ -593,17 +587,17 @@ const AddPromoCode = () => {
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                                         <p className="text-sm font-medium text-blue-800">Total Codes</p>
-                                        <p className="text-2xl font-bold text-blue-900">{promoCodes.length}</p>
+                                        <p className="text-2xl font-semibold text-blue-900">{promoCodes.length}</p>
                                     </div>
                                     <div className="bg-green-50 p-3 rounded-lg border border-green-200">
                                         <p className="text-sm font-medium text-green-800">Active</p>
-                                        <p className="text-2xl font-bold text-green-900">
+                                        <p className="text-2xl font-semibold text-green-900">
                                             {promoCodes.filter(p => !isExpired(p.expiryDate)).length}
                                         </p>
                                     </div>
                                     <div className="bg-purple-50 p-3 rounded-lg border border-purple-200">
                                         <p className="text-sm font-medium text-purple-800">Total Discount</p>
-                                        <p className="text-2xl font-bold text-purple-900">
+                                        <p className="text-2xl font-semibold text-purple-900">
                                             ${promoCodes.reduce((sum, promo) => sum + parseFloat(promo.discount), 0).toFixed(2)}
                                         </p>
                                     </div>

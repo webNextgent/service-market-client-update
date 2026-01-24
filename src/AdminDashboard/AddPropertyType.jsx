@@ -6,6 +6,8 @@ import { IoClose } from "react-icons/io5";
 import useDashboardPropertyType from "../hooks/userDashboardPropertyType";
 import useDashboardServiceType from "../hooks/useDashboardServiceType";
 import { GoBrowser } from "react-icons/go";
+import useAxiosSecure from "../hooks/useAxiosSecure";
+import Swal from "sweetalert2";
 
 const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
@@ -13,6 +15,7 @@ const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_ke
 export default function AddPropertyType() {
     const [serviceType] = useDashboardServiceType();
     const [propertyType, refetch] = useDashboardPropertyType();
+    const axiosSecure = useAxiosSecure();
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,23 +75,15 @@ export default function AddPropertyType() {
                 image: imageUrl,
             };
 
-            const postRes = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/property-type/create`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(finalData),
-                }
-            );
-            const result = await postRes.json();
+            const postRes = await axiosSecure.post(`/property-type/create`, finalData);
 
-            if (result.success) {
+            if (postRes?.data?.success) {
                 toast.success("Property Type added successfully");
                 reset();
                 setIsModalOpen(false);
                 refetch();
             } else {
-                toast.error(result.message || "Failed to add property type");
+                toast.error(postRes?.message || "Failed to add property type");
             }
         } catch (error) {
             toast.error("Something went wrong: " + error?.message);
@@ -159,23 +154,14 @@ export default function AddPropertyType() {
         };
 
         try {
-            const res = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/property-type/update/${selectedItem.id}`,
-                {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(updatedData),
-                }
-            );
+            const res = await axiosSecure.patch(`/property-type/update/${selectedItem.id}`, updatedData);
 
-            const result = await res.json();
-
-            if (result.success) {
+            if (res?.data?.success) {
                 toast.success("Updated successfully");
                 closeEditModal();
                 refetch();
             } else {
-                toast.error(result.message || "Update failed");
+                toast.error(res?.message || "Update failed");
             }
         } catch (error) {
             toast.error("Update failed: " + error?.message);
@@ -185,26 +171,28 @@ export default function AddPropertyType() {
     };
 
     const handelDeleteServiceType = async (service) => {
-        if (!window.confirm("Are you sure you want to delete this property type?")) {
-            return;
-        }
-
         try {
-            const res = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/property-type/delete/${service.id}`,
-                {
-                    method: "DELETE",
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const res = await axiosSecure.delete(`/property-type/delete/${service.id}`);
+                    if (res?.data?.success) {
+                        refetch();
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Property type deleted successfully",
+                            icon: "success"
+                        });
+                    }
                 }
-            );
-
-            const result = await res.json();
-
-            if (result.success) {
-                toast.success("Property type deleted successfully");
-                refetch();
-            } else {
-                toast.error("Failed to delete property type");
-            }
+            })
         } catch (error) {
             console.error(error);
             toast.error("Something went wrong");

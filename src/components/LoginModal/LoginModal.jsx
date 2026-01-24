@@ -548,6 +548,7 @@ const LoginModal = ({ open, onClose }) => {
                                 'Continue'
                             )}
                         </button>
+                        <p className="text-center my-2 text-blue-500">use only whatsapp number</p>
                     </>
                 ) : (
                     // OTP Verification View

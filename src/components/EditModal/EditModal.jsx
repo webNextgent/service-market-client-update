@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import useAllServices from "../../hooks/useAllServices";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const EditModal = ({ service, onClose }) => {
     const { register, handleSubmit, formState: { errors } } = useForm({
@@ -16,6 +17,7 @@ const EditModal = ({ service, onClose }) => {
     });
     const [loading, setLoading] = useState(false);
     const [, , refetch] = useAllServices();
+    const axiosSecure = useAxiosSecure();
 
     const handleFormSubmit = async (data) => {
         setLoading(true);
@@ -45,18 +47,9 @@ const EditModal = ({ service, onClose }) => {
                 image: imageUrl,
             };
 
-            const updateRes = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/service/update/${service.id}`,
-                {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(updatedData),
-                }
-            );
+            const updateRes = await axiosSecure.patch(`/service/update/${service.id}`, updatedData);
 
-            const result = await updateRes.json();
-
-            if (result.success) {
+            if (updateRes?.data?.success) {
                 toast.success("Service updated successfully");
                 onClose(false);
                 refetch();
@@ -65,7 +58,6 @@ const EditModal = ({ service, onClose }) => {
             }
         } catch (error) {
             toast.error(`Error: ${error?.message}`);
-            // console.log(error);
         } finally {
             setLoading(false);
         }

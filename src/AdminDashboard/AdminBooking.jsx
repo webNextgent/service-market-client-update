@@ -4,6 +4,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { FaCalendarAlt, FaRegEye, FaRegEdit, FaRegTrashAlt, FaMapMarkerAlt, FaShare, FaExternalLinkAlt, FaCopy, FaWhatsapp, FaEnvelope, FaUser, FaPhone, FaDollarSign, FaChevronLeft, FaChevronRight, FaMap, FaLink } from "react-icons/fa";
 import { IoClose, IoCopyOutline } from "react-icons/io5";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
 const AdminBooking = () => {
     const queryClient = useQueryClient();
@@ -19,33 +21,16 @@ const AdminBooking = () => {
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [demoMode,] = useState(true);
     const shareRef = useRef(null);
-
-
-    // Fetch Bookings
-    // const { data: bookings = [], isLoading, error } = useQuery({
-    //     queryKey: ["bookingAdmin"],
-    //     queryFn: async () => {
-    //         const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/booking`);
-    //         if (!res.ok) throw new Error("Failed to fetch bookings");
-    //         const bookingRes = await res.json();
-    //         return bookingRes.Data || [];
-    //     },
-    //     retry: 2,
-    //     staleTime: 1000 * 60 * 5,
-    // });
+    const axiosSecure = useAxiosSecure();
 
 
     const { data: bookings = [], isLoading, error } = useQuery({
         queryKey: ["bookingAdmin"],
         queryFn: async () => {
             try {
-                const res = await useAxiosSecure.get("/booking");
-                console.log("Full API response:", res.data);
-                console.log("Success:", res.data.success);
-                console.log("Data:", res.data.Data);
+                const res = await axiosSecure.get("/booking");
 
-                // Return the data based on your API structure
-                if (res.data.success) {
+                if (res?.data?.success) {
                     return res.data.Data || [];
                 } else {
                     throw new Error(res.data.message || "Failed to fetch bookings");
@@ -81,7 +66,6 @@ const AdminBooking = () => {
             book.customerName?.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = statusFilter === "all" || book.status === statusFilter;
-
         return matchesSearch && matchesStatus;
     });
 
@@ -96,63 +80,58 @@ const AdminBooking = () => {
         setCurrentPage(1);
     }, [searchTerm, statusFilter]);
 
-    // Handle booking update
     const handleUpdateBooking = async () => {
         if (!selectedBooking) return;
+        const updateData = {
+            status: selectedBooking.status,
+            address: selectedBooking.address,
+            date: selectedBooking.date,
+            time: selectedBooking.time,
+            totalPay: Number(selectedBooking.totalPay)
+        }
 
         try {
-            const res = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/booking/update/${selectedBooking.id}`,
-                {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        status: selectedBooking.status,
-                        address: selectedBooking.address,
-                        date: selectedBooking.date,
-                        time: selectedBooking.time,
-                        totalPay: selectedBooking.totalPay
-                    }),
-                }
-            );
+            const res = await axiosSecure.patch(`/booking/update/${selectedBooking.id}`, updateData);
 
-            const data = await res.json();
-            if (data.success) {
+            if (res?.data?.success) {
                 queryClient.invalidateQueries(["bookingAdmin"]);
                 setSelectedBooking(null);
-                alert("✅ Booking updated successfully!");
+                toast.success("Booking updated successfully!");
             } else {
-                alert("Failed to update booking");
+                toast.error("Failed to update booking");
             }
         } catch (error) {
             console.error("Update error:", error);
-            alert("Something went wrong!");
+            toast.error("Something went wrong!");
         }
     };
 
-    // Handle booking deletion
     const handleDeleteBooking = async (bookingId) => {
-        if (!window.confirm("Are you sure you want to delete this booking? This action cannot be undone.")) {
-            return;
-        }
         try {
-            const res = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/booking/delete/${bookingId}`,
-                {
-                    method: "DELETE",
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const res = await axiosSecure.delete(`/booking/delete/${bookingId}`);
+                    if (res?.data?.success) {
+                        queryClient.invalidateQueries(["bookingAdmin"]);
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Your file has been deleted.",
+                            icon: "success"
+                        });
+                    }
                 }
-            );
-
-            const data = await res.json();
-            if (data.success) {
-                queryClient.invalidateQueries(["bookingAdmin"]);
-                alert("✅ Booking deleted successfully!");
-            } else {
-                alert("Failed to delete booking");
-            }
+            })
         } catch (error) {
             console.error("Delete error:", error);
-            alert("Something went wrong!");
+            toast.error("Something went wrong!");
         }
     };
 
@@ -352,7 +331,7 @@ const AdminBooking = () => {
             <div className="mb-8">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-8">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Bookings</h1>
+                        <h1 className="text-3xl font-semibold text-gray-900">Bookings</h1>
                         <p className="text-gray-600 mt-2">
                             {bookings.length} total bookings • {completedBookings} completed • {formatCurrency(totalRevenue)} revenue
                         </p>
@@ -483,7 +462,7 @@ const AdminBooking = () => {
                                                         <div className="font-semibold text-gray-900 mb-1">
                                                             {book.serviceName}
                                                         </div>
-                                                        <div className="text-2xl font-bold text-gray-900">
+                                                        <div className="text-2xl font-semibold text-gray-900">
                                                             {formatCurrency(book.totalPay)}
                                                         </div>
                                                         {book.customerName && (
@@ -508,7 +487,7 @@ const AdminBooking = () => {
                                                 <td className="py-5 px-6">
                                                     <div className="max-w-[250px]">
                                                         <div className="flex items-start gap-2 text-gray-700">
-                                                            <FaMapMarkerAlt className="w-4 h-4 mt-1 flex-shrink-0 text-gray-400" />
+                                                            <FaMapMarkerAlt className="w-4 h-4 mt-1 shrink-0 text-gray-400" />
                                                             <span className="line-clamp-2">{book.address}</span>
                                                         </div>
                                                         <div className="mt-2 flex items-center gap-2">
@@ -641,7 +620,7 @@ const AdminBooking = () => {
                                             </div>
                                             <div className="text-right">
                                                 <div className="bg-gray-50 px-4 py-3 rounded-xl border border-gray-200">
-                                                    <p className="text-2xl font-bold text-gray-900">{formatCurrency(book.totalPay)}</p>
+                                                    <p className="text-2xl font-semibold text-gray-900">{formatCurrency(book.totalPay)}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -778,7 +757,7 @@ const AdminBooking = () => {
                         {/* Header */}
                         <div className="flex items-center justify-between p-7 border-b border-gray-200">
                             <div>
-                                <h3 className="text-2xl font-bold text-gray-900">Edit Booking</h3>
+                                <h3 className="text-2xl font-semibold text-gray-900">Edit Booking</h3>
                                 <div className="flex items-center gap-4 mt-2">
                                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(selectedBooking.status)}`}>
                                         {selectedBooking.status}
@@ -983,7 +962,7 @@ const AdminBooking = () => {
                         {/* Header */}
                         <div className="flex items-center justify-between p-7 border-b border-gray-200">
                             <div>
-                                <h3 className="text-2xl font-bold text-gray-900">Booking Details</h3>
+                                <h3 className="text-2xl font-semibold text-gray-900">Booking Details</h3>
                                 <div className="flex items-center gap-4 mt-2">
                                     <span className={`inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold ${getStatusColor(bookingDetails.status)}`}>
                                         {bookingDetails.status}
@@ -1016,7 +995,7 @@ const AdminBooking = () => {
                                             Service Information
                                         </h4>
                                         <div className="p-5 bg-gray-50 rounded-xl border border-gray-200">
-                                            <p className="text-2xl font-bold text-gray-900 mb-3">{bookingDetails.serviceName}</p>
+                                            <p className="text-2xl font-semibold text-gray-900 mb-3">{bookingDetails.serviceName}</p>
                                             <div className="space-y-3">
                                                 {bookingDetails.customerName && (
                                                     <div className="flex items-center gap-3">
@@ -1049,7 +1028,7 @@ const AdminBooking = () => {
                                         <div className="p-5 bg-gray-50 rounded-xl border border-gray-200">
                                             <div className="flex items-center justify-between mb-4">
                                                 <p className="text-gray-600">Total Amount</p>
-                                                <p className="text-3xl font-bold text-gray-900">{formatCurrency(bookingDetails.totalPay)}</p>
+                                                <p className="text-3xl font-semibold text-gray-900">{formatCurrency(bookingDetails.totalPay)}</p>
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 <p className="text-gray-600">Payment Status</p>

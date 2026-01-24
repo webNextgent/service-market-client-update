@@ -6,6 +6,8 @@ import { GoBrowser } from "react-icons/go";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import useAllServices from "../hooks/useAllServices";
+import useAxiosSecure from "../hooks/useAxiosSecure";
+import Swal from "sweetalert2";
 
 const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
@@ -17,6 +19,7 @@ export default function AddServiceType() {
   const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedValue, setSelectedValue] = useState(null);
+  const axiosSecure = useAxiosSecure();
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
@@ -37,14 +40,9 @@ export default function AddServiceType() {
 
       const finalData = { ...data, image: result.data.url };
 
-      const postData = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/service-type/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(finalData),
-      });
-      const postResult = await postData.json();
+      const postData = await axiosSecure.post('/service-type/create', finalData);
 
-      if (postResult.success) {
+      if (postData?.data?.success) {
         toast.success("Service added successfully");
         setIsModalOpenAdd(false);
         reset();
@@ -52,7 +50,6 @@ export default function AddServiceType() {
       }
     } catch (error) {
       toast.error(`Something wrong: ${error?.message || error}`);
-      // console.log(error);
     } finally {
       setLoading(false);
     }
@@ -62,9 +59,8 @@ export default function AddServiceType() {
   const handleFormSubmitEdit = async (data) => {
     setLoading(true);
     try {
-      let imageUrl = selectedValue.image; // default old image
+      let imageUrl = selectedValue.image;
 
-      // নতুন image select করলে upload হবে
       if (data.image && data.image.length > 0) {
         const formData = new FormData();
         formData.append("image", data.image[0]);
@@ -83,18 +79,8 @@ export default function AddServiceType() {
 
       const updatedData = { ...data, image: imageUrl };
 
-      const updateRes = await fetch(
-        `${import.meta.env.VITE_BACKEND_API_URL}/service-type/update/${selectedValue.id}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedData),
-        }
-      );
-
-      const result = await updateRes.json();
-
-      if (result.success) {
+      const updateRes = await axiosSecure.patch(`/service-type/update/${selectedValue.id}`, updatedData);
+      if (updateRes?.data?.success) {
         toast.success("Service updated successfully");
         setIsModalOpenEdit(false);
         refetch();
@@ -102,8 +88,7 @@ export default function AddServiceType() {
         toast.error("Failed to update");
       }
     } catch (error) {
-      toast.error(`Error: ${error?.message}`);
-      // console.log(error);
+      toast.error(`Error: ${error?.message} `);
     } finally {
       setLoading(false);
     }
@@ -111,21 +96,27 @@ export default function AddServiceType() {
 
   const handelDeleteServiceType = async (service) => {
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_API_URL}/service-type/delete/${service.id}`,
-        {
-          method: "DELETE",
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const res = await axiosSecure.delete(`/service-type/delete/${service.id}`);
+          if (res?.data?.success) {
+            refetch();
+            Swal.fire({
+              title: "Deleted!",
+              text: "Service deleted successfully",
+              icon: "success"
+            });
+          }
         }
-      );
-
-      const result = await res.json();
-
-      if (result.success) {
-        toast.success("Service deleted successfully");
-        refetch(); // list reload
-      } else {
-        toast.error("Failed to delete service");
-      }
+      })
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");

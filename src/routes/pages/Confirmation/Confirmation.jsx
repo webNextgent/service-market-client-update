@@ -109,7 +109,7 @@ export default function Confirmation() {
                 return false;
             }
 
-            toast.success("Booking sent successfully!");
+            toast.success("Booking successfully!");
             navigate("/booking-success");
             return true;
 
