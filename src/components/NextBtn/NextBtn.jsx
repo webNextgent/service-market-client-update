@@ -1,7 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { steps } from "./FlowSteps";
 import useAuth from "../../hooks/useAuth";
-import toast from "react-hot-toast";
 import { useSummary } from "../../provider/SummaryProvider";
 
 const NextBtn = ({ name = "Next", disabled, onClick }) => {
@@ -16,7 +15,6 @@ const NextBtn = ({ name = "Next", disabled, onClick }) => {
 
     const handleClick = async () => {
         if (user === null) {
-            toast.error('Please login first');
             setLoginModalOpen(true);
             return;
         }

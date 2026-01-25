@@ -13,7 +13,6 @@ import { SiServerless } from "react-icons/si";
 import { LuProportions } from "react-icons/lu";
 import { IoMdTime } from "react-icons/io";
 import { SiProton } from "react-icons/si";
-import userProfile from '../assets/logo/logo.png';
 import useAuth from "../hooks/useAuth";
 
 const UserDashboard = () => {
@@ -248,63 +247,65 @@ const UserDashboard = () => {
 
 
     return (
-        <div className="drawer lg:drawer-open max-w-7xl mx-auto px-4">
-            <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
+        <div className="w-full bg-white text-gray-500">
+            <div className="drawer lg:drawer-open max-w-7xl mx-auto">
+                <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
 
-            {/* Drawer Content */}
-            <div className="drawer-content flex flex-col">
-                {/* Top Navbar for Mobile - WITH IMAGE */}
-                <div className="w-full navbar flex justify-between items-center lg:hidden px-4 py-3 bg-white shadow-sm">
-                    <div className="flex items-center gap-2">
-                        <label htmlFor="dashboard-drawer" className="btn btn-ghost lg:hidden p-2">
-                            <MdMenu size={24} />
-                        </label>
-                        {/* <Link to='/' className="flex items-center">
+                {/* Drawer Content */}
+                <div className="drawer-content flex flex-col">
+                    {/* Top Navbar for Mobile - WITH IMAGE */}
+                    <div className="w-full navbar flex justify-between items-center lg:hidden px-4 py-3 shadow-sm">
+                        <div className="flex items-center gap-2">
+                            <label htmlFor="dashboard-drawer" className="btn btn-ghost lg:hidden p-2">
+                                <MdMenu size={24} />
+                            </label>
+                            {/* <Link to='/' className="flex items-center">
                             <img className="w-32" src={logo} alt="logo" />
                         </Link> */}
-                    </div>
+                        </div>
 
-                    {/* User Image on Mobile Navbar */}
-                    <div className="flex items-center gap-3">
-                        <div className="relative">
-                            <img
-                                src={userProfile}
-                                alt="User"
-                                className="w-10 h-10 rounded-full object-cover border-2 border-[#01788E]"
-                            />
+                        {/* User Image on Mobile Navbar */}
+                        <div className="flex items-center gap-3">
+                            <div className="relative">
+                                {/* <img
+                                    src={userProfile}
+                                    alt="User"
+                                    className="w-10 h-10 rounded-full object-cover border-2 border-[#01788E]"
+                                /> */}
+                                <p className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center"><FaUser /></p>
+                            </div>
                         </div>
                     </div>
+
+                    <div className="md:px-10">
+                        <Outlet />
+                    </div>
                 </div>
 
-                <div className="md:px-10">
-                    <Outlet />
-                </div>
-            </div>
+                {/* Drawer Side */}
+                <div className="drawer-side ">
+                    <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
 
-            {/* Drawer Side */}
-            <div className="drawer-side ">
-                <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
+                    <div className="md:w-72 bg-[#FFFFFF] p-2 relative min-h-screen">
 
-                <div className="md:w-72 bg-[#FFFFFF] p-2 relative min-h-screen">
+                        {/* Mobile Close Button */}
+                        <label
+                            htmlFor="dashboard-drawer"
+                            className="btn btn-sm btn-circle absolute right-2 top-2 lg:hidden"
+                        >
+                            ✕
+                        </label>
 
-                    {/* Mobile Close Button */}
-                    <label
-                        htmlFor="dashboard-drawer"
-                        className="btn btn-sm btn-circle absolute right-2 top-2 lg:hidden"
-                    >
-                        ✕
-                    </label>
+                        <div className="flex flex-col items-center justify-center mb-4">
+                            <Link to='/' className="mb-4">
+                                <img className="w-52 md:mt-4" src={logo} alt="logo" />
+                            </Link>
 
-                    <div className="flex flex-col items-center justify-center mb-4">
-                        <Link to='/' className="mb-4">
-                            <img className="w-52 md:mt-4" src={logo} alt="logo" />
-                        </Link>
+                            {/* User Info with Image - Professional Layout */}
+                            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl w-full max-w-xs mb-4">
 
-                        {/* User Info with Image - Professional Layout */}
-                        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl w-full max-w-xs mb-4">
-
-                            {/* User Image */}
-                            {/* <div className="relative">
+                                {/* User Image */}
+                                {/* <div className="relative">
                                 <img 
                                     src={userProfile} 
                                     alt="User" 
@@ -313,21 +314,22 @@ const UserDashboard = () => {
                                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                             </div> */}
 
-                            {/* User Details */}
-                            <div className="flex-1 text-center">
-                                {/* <h2 className="text-lg font-bold text-gray-800">Rakib</h2> */}
-                                <p className="text-sm font-medium text-[#01788E] mt-1">{user?.role}</p>
-                                {/* <p className="text-xs text-gray-500 mt-0.5">Al Bada'a, Dubai</p> */}
+                                {/* User Details */}
+                                <div className="flex-1 text-center">
+                                    {/* <h2 className="text-lg font-bold text-gray-800">Rakib</h2> */}
+                                    <p className="text-sm font-medium text-[#01788E] mt-1">{user?.role}</p>
+                                    {/* <p className="text-xs text-gray-500 mt-0.5">Al Bada'a, Dubai</p> */}
 
-                                {/* Optional: Wallet Balance */}
-                                {/* <div className="flex items-center gap-1 mt-2">
+                                    {/* Optional: Wallet Balance */}
+                                    {/* <div className="flex items-center gap-1 mt-2">
                                     <img className="h-3 w-3" src={dirhum} alt="dirhum" />
                                     <p className="text-xs font-medium text-gray-700">80 Credits</p>
                                 </div> */}
+                                </div>
                             </div>
                         </div>
+                        {links}
                     </div>
-                    {links}
                 </div>
             </div>
         </div>

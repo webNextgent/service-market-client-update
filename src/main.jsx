@@ -13,15 +13,15 @@ const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <ItemProvider>
-          <SummaryProvider>
-            <Toaster position="top-center" reverseOrder={false} />
-            <RouterProvider router={router}></RouterProvider>
-          </SummaryProvider>
-        </ItemProvider>
-      </QueryClientProvider>
-    </AuthProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <ItemProvider>
+            <SummaryProvider>
+              <Toaster position="top-center" reverseOrder={false} />
+              <RouterProvider router={router}></RouterProvider>
+            </SummaryProvider>
+          </ItemProvider>
+        </QueryClientProvider>
+      </AuthProvider>
   </StrictMode>,
 )

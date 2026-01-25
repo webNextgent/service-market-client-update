@@ -4,6 +4,7 @@ import logo from "../../../../assets/logo/logo.png";
 import { useState } from "react";
 import useAuth from "../../../../hooks/useAuth";
 import { useSummary } from "../../../../provider/SummaryProvider";
+import { useTheme } from "../../../../provider/ThemeProvider";
 
 const Navbar = () => {
     // const [openModal, setOpenModal] = useState(false);

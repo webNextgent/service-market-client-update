@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import { useEffect, useRef, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { FiMessageCircle, FiPhone } from "react-icons/fi";
@@ -17,14 +17,12 @@ import toast from "react-hot-toast";
 
 export default function BookingDetails() {
     const item = useLoaderData();
-    // const [openInstructionsModal, setOpenInstructionsModal] = useState(false);
+    const scrollerRef = useRef(null);
     const [openModal, setOpenModal] = useState(false);
-    // const [instructions, setInstructions] = useState("");
     const [modalAddress, setModalAddress] = useState(false);
     const [modalPrice, setModalPrice] = useState(false);
     const [modalRescudle, setModalRescudle] = useState(false);
     const [modalPaymentMethod, setModalPaymentMethod] = useState(false);
-    const scrollerRef = useRef(null);
     const [selectedDay, setSelectedDay] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
     const [modalAddressUpdate, setModalAddressUpdate] = useState(false);
@@ -42,6 +40,8 @@ export default function BookingDetails() {
     const handelReschudeleFun = () => {
         setModalRescudle(true);
     }
+
+    console.log(item.Data);
 
     // const handleAddInstructions = () => {
     //     console.log("Instructions saved:", instructions);
@@ -76,7 +76,6 @@ export default function BookingDetails() {
         }
 
         const parts = addressString.split(" - ").map(part => part.trim());
-
         return {
             apartmentNo: parts[0] || "",
             buildingName: parts[1] || "",
@@ -101,7 +100,6 @@ export default function BookingDetails() {
             return res?.data;
         }
     });
-    console.log(dateTime);
 
     const formatDateForDisplay = (dateString) => {
         if (!dateString) return "";
@@ -125,7 +123,6 @@ export default function BookingDetails() {
         }
 
         const dateMap = new Map();
-
         dateTime.Data.forEach(item => {
             const date = item.date;
             const timeSlots = item.time || [];
@@ -151,7 +148,6 @@ export default function BookingDetails() {
         const daysArray = Array.from(dateMap.values()).sort((a, b) =>
             new Date(a.date) - new Date(b.date)
         );
-
         return daysArray;
     };
 
@@ -250,114 +246,83 @@ export default function BookingDetails() {
         setIsUpdatingAddress(true);
 
         try {
-            const endpoints = [
-                `${import.meta.env.VITE_BACKEND_API_URL}/booking/userBooking/${bookingId}`,
-                `${import.meta.env.VITE_BACKEND_API_URL}/booking/${bookingId}`,
-                `${import.meta.env.VITE_BACKEND_API_URL}/userBooking/${bookingId}`,
-                `${import.meta.env.VITE_BACKEND_API_URL}/booking/updateAddress/${bookingId}`
-            ];
+            const res = await axiosSecure.patch(`/booking/update/${bookingId}`, updateData);
 
-            let response = null;
-            let success = false;
-
-            for (const endpoint of endpoints) {
-                try {
-                    console.log("Trying endpoint:", endpoint);
-                    response = await fetch(endpoint, {
-                        method: "PATCH",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ address: formattedAddress }),
-                    });
-
-                    if (response.ok) {
-                        success = true;
-                        break;
-                    }
-                } catch (err) {
-                    console.log("Failed with endpoint:", endpoint, err);
-                }
-            }
-
-            if (success && response) {
-                const result = await response.json();
-                console.log("Address updated successfully:", result);
-                alert("Address updated successfully!");
+            if (res?.data?.success) {
+                toast.success('Address update successfully');
                 setModalAddressUpdate(false);
             } else {
-                alert("Failed to update address. Please try a different endpoint or contact support.");
+                toast.error('Something is wrong');
             }
+            // eslint-disable-next-line no-unused-vars
         } catch (error) {
-            console.error("Error updating address:", error);
-            alert("Network error. Please check your connection and try again.");
+            toast.error('Something is wrong');
         } finally {
             setIsUpdatingAddress(false);
         }
-
         return true;
     };
 
     // Handle payment method update
-    const handlePaymentMethodUpdate = async () => {
-        const bookingId = item?.Data?.id;
+    // const handlePaymentMethodUpdate = async () => {
+    //     const bookingId = item?.Data?.id;
 
-        if (!bookingId) {
-            alert("Booking ID not found!");
-            return false;
-        }
+    //     if (!bookingId) {
+    //         alert("Booking ID not found!");
+    //         return false;
+    //     }
 
-        console.log("Updating payment method to:", selectedPaymentMethod);
-        setIsUpdatingPayment(true);
+    //     console.log("Updating payment method to:", selectedPaymentMethod);
+    //     setIsUpdatingPayment(true);
 
-        try {
-            const endpoints = [
-                `${import.meta.env.VITE_BACKEND_API_URL}/booking/userBooking/${bookingId}`,
-                `${import.meta.env.VITE_BACKEND_API_URL}/booking/${bookingId}`,
-                `${import.meta.env.VITE_BACKEND_API_URL}/userBooking/${bookingId}`,
-                `${import.meta.env.VITE_BACKEND_API_URL}/booking/updatePayment/${bookingId}`
-            ];
+    //     try {
+    //         const endpoints = [
+    //             `${import.meta.env.VITE_BACKEND_API_URL}/booking/userBooking/${bookingId}`,
+    //             `${import.meta.env.VITE_BACKEND_API_URL}/booking/${bookingId}`,
+    //             `${import.meta.env.VITE_BACKEND_API_URL}/userBooking/${bookingId}`,
+    //             `${import.meta.env.VITE_BACKEND_API_URL}/booking/updatePayment/${bookingId}`
+    //         ];
 
-            let response = null;
-            let success = false;
+    //         let response = null;
+    //         let success = false;
 
-            for (const endpoint of endpoints) {
-                try {
-                    console.log("Trying endpoint:", endpoint);
-                    response = await fetch(endpoint, {
-                        method: "PATCH",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            paymentMethod: selectedPaymentMethod
-                        }),
-                    });
+    //         for (const endpoint of endpoints) {
+    //             try {
+    //                 console.log("Trying endpoint:", endpoint);
+    //                 response = await fetch(endpoint, {
+    //                     method: "PATCH",
+    //                     headers: {
+    //                         "Content-Type": "application/json",
+    //                     },
+    //                     body: JSON.stringify({
+    //                         paymentMethod: selectedPaymentMethod
+    //                     }),
+    //                 });
 
-                    if (response.ok) {
-                        success = true;
-                        break;
-                    }
-                } catch (err) {
-                    console.log("Failed with endpoint:", endpoint, err);
-                }
-            }
+    //                 if (response.ok) {
+    //                     success = true;
+    //                     break;
+    //                 }
+    //             } catch (err) {
+    //                 console.log("Failed with endpoint:", endpoint, err);
+    //             }
+    //         }
 
-            if (success && response) {
-                const result = await response.json();
-                console.log("Payment method updated successfully:", result);
-                alert(`Payment method changed to ${selectedPaymentMethod} successfully!`);
-                setModalPaymentMethod(false);
-            } else {
-                alert("Failed to update payment method. Please try a different endpoint or contact support.");
-            }
-        } catch (error) {
-            console.error("Error updating payment method:", error);
-            alert("Network error. Please check your connection and try again.");
-        } finally {
-            setIsUpdatingPayment(false);
-        }
-    };
+    //         if (success && response) {
+    //             const result = await response.json();
+    //             console.log("Payment method updated successfully:", result);
+    //             alert(`Payment method changed to ${selectedPaymentMethod} successfully!`);
+    //             setModalPaymentMethod(false);
+    //         } else {
+    //             alert("Failed to update payment method. Please try a different endpoint or contact support.");
+    //         }
+    //     } catch (error) {
+    //         console.error("Error updating payment method:", error);
+    //         alert("Network error. Please check your connection and try again.");
+    //     } finally {
+    //         setIsUpdatingPayment(false);
+    //     }
+    // };
 
     // Load current address into form when modal opens
     useEffect(() => {
@@ -421,6 +386,7 @@ export default function BookingDetails() {
                 setSelectedDay(firstDay);
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dateTime, selectedDay]);
 
     const handleUserUpdateBookingStatus = async (id) => {
@@ -446,7 +412,7 @@ export default function BookingDetails() {
             <div className="max-w-5xl mx-auto">
                 {/* Header Section */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Booking Details</h1>
+                    <h1 className="text-3xl font-semibold text-gray-900 mb-2">Booking Details</h1>
                     <p className="text-gray-600">Manage your booking and view all details</p>
                 </div>
 
@@ -455,7 +421,7 @@ export default function BookingDetails() {
                     {/* Left Column - Booking Info */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Confirmation Card */}
-                        <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl shadow-sm border border-blue-100 p-6">
+                        <div className="bg-linear-to-r from-blue-50 to-cyan-50 rounded-2xl shadow-sm border border-blue-100 p-6">
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                 <div>
                                     <div className="flex items-center gap-3 mb-2">
@@ -560,12 +526,12 @@ export default function BookingDetails() {
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
                                     <div>
-                                        <p className="font-medium text-gray-900">Studio - General</p>
+                                        {/* <p className="font-medium text-gray-900">Studio - General</p> */}
                                         <p className="text-sm text-gray-600">Quantity: 1</p>
                                     </div>
                                     <div className="text-right">
                                         <p className="text-sm text-gray-600">Service Type</p>
-                                        <p className="font-medium text-gray-900">{item?.Data?.serviceName}</p>
+                                        <p className="font-sm text-gray-900">{item?.Data?.serviceName}</p>
                                     </div>
                                 </div>
                                 <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
@@ -1323,7 +1289,7 @@ export default function BookingDetails() {
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={handlePaymentMethodUpdate}
+                                        // onClick={handlePaymentMethodUpdate}
                                         className="flex-1 px-6 py-3.5 text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
                                         disabled={isUpdatingPayment}
                                     >
@@ -1366,7 +1332,6 @@ export default function BookingDetails() {
 
                             <div className="flex-1 overflow-y-auto p-6">
                                 <form onSubmit={handleSubmit(handleAddressUpdate)} className="space-y-6">
-                                    {/* TYPE BUTTONS - Updated to match Address component */}
                                     <div className="flex space-x-3 mb-6 overflow-x-auto">
                                         {propertyTypes.map(btn => (
                                             <button

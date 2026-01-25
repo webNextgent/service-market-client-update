@@ -25,15 +25,6 @@ const BookingCard = ({ item }) => {
 
             {/* Header */}
             <div className="flex justify-between items-start">
-                {/* <div>
-                    <h2 className="text-[20px] font-semibold text-gray-900">
-                        {serviceName}
-                    </h2>
-                    <p className="text-[14px] text-gray-500 mt-1">
-                        {date} • {time}
-                    </p>
-                </div> */}
-
                 <div>
                     <h2 className="text-[20px] font-semibold text-gray-900">
                         {serviceName}
@@ -54,8 +45,6 @@ const BookingCard = ({ item }) => {
                         {date} • {time}
                     </p>
                 </div>
-
-
 
                 {/* Status Badge */}
                 <span
