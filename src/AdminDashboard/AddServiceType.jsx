@@ -147,7 +147,7 @@ export default function AddServiceType() {
           <div className="w-full overflow-x-auto">
             <table className="table w-full">
               <thead>
-                <tr>
+                <tr className="text-gray-600">
                   <th>No</th>
                   <th>Service Type</th>
                   <th>Edit</th>

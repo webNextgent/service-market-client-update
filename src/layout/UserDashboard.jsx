@@ -247,7 +247,7 @@ const UserDashboard = () => {
 
 
     return (
-        <div className="w-full bg-white text-gray-500">
+        <div className="w-full min-h-screen bg-white text-gray-500">
             <div className="drawer lg:drawer-open max-w-7xl mx-auto">
                 <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
 

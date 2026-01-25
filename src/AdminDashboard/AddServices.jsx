@@ -109,7 +109,7 @@ const AddServices = () => {
                     <div className="overflow-x-auto">
                         <table className="table">
                             <thead>
-                                <tr>
+                                <tr className="text-gray-600">
                                     <th>No</th>
                                     <th>Service Name</th>
                                     <th>Description</th>

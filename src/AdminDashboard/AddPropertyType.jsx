@@ -219,7 +219,7 @@ export default function AddPropertyType() {
             <div className="overflow-x-auto">
                 <table className="table w-full">
                     <thead>
-                        <tr>
+                        <tr className="text-gray-600">
                             <th>No</th>
                             <th>Property Type</th>
                             <th>Edit</th>

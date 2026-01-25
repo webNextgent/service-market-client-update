@@ -53,15 +53,15 @@ const CoverContent = ({ content }) => {
                             {/* Price & Button - Professional Layout */}
                             <div className="flex items-center justify-between">
                                 {/* Price - Compact Professional */}
-                                <div className="flex flex-col sm:items-center sm:flex-row md:gap-2">
-                                    <p className="text-sm mb-1">Starting from</p>
+                                <div className="flex items-center flex-col sm:items-center sm:flex-row md:gap-2">
+                                    <p className="text-sm">Starting from</p>
                                     <div className="flex items-center">
                                         <img
-                                            className="h-3.5 w-3.5 md:h-4 md:w-4"
+                                            className="h-3 w-3 md:h-3.5 md:w-3.5 mt-0.5 "
                                             src={dirhum}
                                             alt="AED"
                                         />
-                                        <span className="font-semibold text-base text-[16px] text-gray-900 mb-0.5">
+                                        <span className="font-semibold text-base text-[16px] text-gray-900">
                                             {property.startFrom.toLocaleString()}
                                         </span>
                                     </div>
