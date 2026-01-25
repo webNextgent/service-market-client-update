@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { steps } from "./FlowSteps";
 import useAuth from "../../hooks/useAuth";
 import toast from "react-hot-toast";
+import { useSummary } from "../../provider/SummaryProvider";
 
 const NextBtn = ({ name = "Next", disabled, onClick }) => {
     const navigate = useNavigate();
@@ -10,10 +11,13 @@ const NextBtn = ({ name = "Next", disabled, onClick }) => {
     const currentIndex = steps.indexOf(pathname);
     let nextPath = steps[currentIndex + 1];
     let isDisabled = disabled ?? false;
+    const { setLoginModalOpen } = useSummary();
+
 
     const handleClick = async () => {
         if (user === null) {
             toast.error('Please login first');
+            setLoginModalOpen(true);
             return;
         }
 

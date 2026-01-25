@@ -19,6 +19,7 @@ import useAuth from "../hooks/useAuth";
 const UserDashboard = () => {
     const { user, logOut } = useAuth();
     const router = useNavigate();
+    const role = user?.role;
 
 
     const handleLogout = () => {
@@ -26,11 +27,10 @@ const UserDashboard = () => {
         router("/");
     }
 
-
     const links = (
         <>
             {/* just user  */}
-            {user && user?.role !== 'ADMIN' && (
+            {role === 'USER' && (
                 <ul>
                     {/* My Bookings */}
                     <li className="list-none border-y border-dashed hover:bg-gray-50">
@@ -152,7 +152,7 @@ const UserDashboard = () => {
             )}
 
             {/* just admin  */}
-            {user && user?.role === 'ADMIN' && (
+            {(role === 'ADMIN' || role === 'SUPER_ADMIN') && (
                 <ul>
                     <li className="list-none border-y border-dashed hover:bg-gray-50">
                         <NavLink

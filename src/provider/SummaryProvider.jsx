@@ -6,6 +6,7 @@ import { useItem } from "./ItemProvider";
 import { useQueries } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { v4 as uuidv4 } from "uuid";
+import LoginModal from "../components/LoginModal/LoginModal";
 
 const SummaryContext = createContext();
 
@@ -26,6 +27,7 @@ export const SummaryProvider = ({ children }) => {
     const [useDiscount, setUseDiscount] = useState(0);
     const [promo, setPromo] = useState("");
     const [promoStatus, setPromoStatus] = useState(false);
+    const [loginModalOpen, setLoginModalOpen] = useState(false);
 
     // Saved addresses management
     const [saveAddress, setSaveAddress] = useState(() => {
@@ -250,6 +252,8 @@ export const SummaryProvider = ({ children }) => {
         setDate,
         time,
         setTime,
+        loginModalOpen,
+        setLoginModalOpen,
 
         // location data
         mapLatitude,
@@ -283,6 +287,11 @@ export const SummaryProvider = ({ children }) => {
     return (
         <SummaryContext.Provider value={summaryInfo}>
             {children}
+
+            <LoginModal
+                open={loginModalOpen}
+                onClose={() => setLoginModalOpen(false)}
+            />
         </SummaryContext.Provider>
     );
 };

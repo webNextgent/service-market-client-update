@@ -1,6 +1,7 @@
 import axios from "axios";
 import useAuth from "./useAuth";
 import { useEffect } from "react";
+import { useSummary } from "../provider/SummaryProvider";
 
 
 const axiosSecure = axios.create({
@@ -9,6 +10,7 @@ const axiosSecure = axios.create({
 
 const useAxiosSecure = () => {
     const { logOut } = useAuth();
+    const { setLoginModalOpen } = useSummary();
 
     useEffect(() => {
         const requestInterceptor = axiosSecure.interceptors.request.use(
@@ -28,6 +30,7 @@ const useAxiosSecure = () => {
                 const status = error.response?.status;
                 if (status === 401 || status === 403) {
                     await logOut();
+                    setLoginModalOpen(true);
                 }
                 return Promise.reject(error);
             }
