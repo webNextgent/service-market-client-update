@@ -23,10 +23,10 @@ const Card = ({ service }) => {
                 <div className="flex items-center justify-between border-b border-gray-200 pb-3">
                     {/* Left Side Info */}
                     <div>
-                        <h2 className="block mt-2 text-xl font-semibold text-gray-700">
+                        <h2 className="block mt-2 text-xl font-bold">
                             {title}
                         </h2>
-                        <div className="flex items-center gap-2 text-gray-600 text-sm">
+                        <div className="flex items-center gap-2 text-sm">
                             <FaStar />
                             <p>{rated}/5</p>
                             <p>({totalBooking})</p>

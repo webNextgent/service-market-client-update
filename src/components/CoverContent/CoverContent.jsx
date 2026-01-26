@@ -31,7 +31,7 @@ const CoverContent = ({ content }) => {
                                 <img
                                     src={property.image}
                                     alt={property.title}
-                                    className="w-28 h-26 object-cover"
+                                    className="w-20 h-20 object-cover"
                                 />
                                 {/*  Overlay */}
                                 <div className="absolute inset-0 bg-linear-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -40,12 +40,11 @@ const CoverContent = ({ content }) => {
 
                         {/* Content - Compact */}
                         <div className="flex-1">
-                            {/* Title & Description - Typography */}
-                            <div className="mb-3">
-                                <h2 className="text-base md:text-lg font-semibold text-gray-800 mb-1.5 line-clamp-1">
+                            <div className="mb-2">
+                                <h2 className="text-base md:text-md font-medium mb-1.5 line-clamp-1">
                                     {property.title}
                                 </h2>
-                                <p className="leading-relaxed line-clamp-2">
+                                <p className="text-xs md:w-[80%] w-[85%] font-medium product-item-description">
                                     {property.description}
                                 </p>
                             </div>
@@ -54,14 +53,14 @@ const CoverContent = ({ content }) => {
                             <div className="flex items-center justify-between">
                                 {/* Price - Compact Professional */}
                                 <div className="flex items-center flex-col sm:items-center sm:flex-row md:gap-2">
-                                    <p className="text-sm">Starting from</p>
+                                    <p className="text-xs font-medium">Starting from</p>
                                     <div className="flex items-center">
                                         <img
-                                            className="h-3 w-3 md:h-3.5 md:w-3.5 mt-0.5 "
+                                            className="h-3 w-3 md:h-3.5 md:w-3.5"
                                             src={dirhum}
                                             alt="AED"
                                         />
-                                        <span className="font-semibold text-base text-[16px] text-gray-900">
+                                        <span className="font-medium text-[15px] text-gray-900">
                                             {property.startFrom.toLocaleString()}
                                         </span>
                                     </div>
@@ -69,7 +68,7 @@ const CoverContent = ({ content }) => {
 
                                 {/* Button - Professional Compact */}
                                 <div className="">
-                                    <button className="border border-[#01788E] px-4 py-2 flex items-center justify-center gap-2 text-[#01788E] rounded text-[12px] font-medium cursor-pointer">
+                                    <button className="border border-[#01788E] text-[#01788E] rounded-sm add-to-card px-3 text-xs py-1.5 flex justify-center items-center">
                                         <span>{property.propertyItems?.length || 0} Options</span>
                                         <MdOutlineArrowRightAlt className="w-4 h-4" />
                                     </button>

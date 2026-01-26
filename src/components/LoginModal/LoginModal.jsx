@@ -453,11 +453,17 @@ const LoginModal = ({ open, onClose }) => {
 
     return (
         <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            className=" fixed inset-0 z-50 bg-black/40 backdrop-blur-sm
+            flex items-end md:items-center
+            justify-center
+            p-0 md:p-4"
             onClick={onClose}>
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="relative w-full max-w-[500px] bg-white rounded-[28px] p-8 shadow-2xl font-sans text-[#2d2d2d]">
+                className="  relative w-full max-w-[500px] bg-white shadow-2xl font-sans text-[#2d2d2d]
+                rounded-t-[28px] md:rounded-[28px]
+                p-6 md:p-8
+                animate-slideUp md:animate-none">
                 {/* Close Button */}
                 <button
                     onClick={onClose}
@@ -471,7 +477,7 @@ const LoginModal = ({ open, onClose }) => {
                 {!otpSuccessModal ? (
                     <>
                         {/* Header */}
-                        <h2 className="text-[28px] font-bold mb-6 text-[#1a1a1a]">Log in or sign up</h2>
+                        <h2 className="text-[20px] md:text-[28px] font-bold mb-6 text-[#1a1a1a]">Log in or sign up</h2>
 
                         <p className="text-[17px] text-[#333333] mb-8">
                             Please enter your mobile number to proceed.
@@ -479,7 +485,7 @@ const LoginModal = ({ open, onClose }) => {
 
                         {/* Input Group */}
                         <div className="mb-8">
-                            <label className="block text-[17px] font-bold mb-3 text-[#1a1a1a]">
+                            <label className="block text-[17px] font-semibold mb-3 text-[#1a1a1a]">
                                 Mobile Number
                             </label>
 
@@ -553,7 +559,7 @@ const LoginModal = ({ open, onClose }) => {
                 ) : (
                     // OTP Verification View
                     <>
-                        <h2 className="text-[28px] font-bold mb-6 text-[#1a1a1a]">Verify mobile number</h2>
+                        <h2 className="text-[18px] md:text-[28px] font-bold mb-6 text-[#1a1a1a]">Verify mobile number</h2>
 
                         <p className="text-[17px] text-[#333333] mb-8">
                             We've sent an OTP via SMS to <span className="font-bold">{fullPhoneNumber}</span>.
@@ -575,7 +581,7 @@ const LoginModal = ({ open, onClose }) => {
                                         onChange={(e) => handleChange(index, e.target.value)}
                                         onKeyDown={(e) => handleKeyDown(index, e)}
                                         onFocus={(e) => e.target.select()}
-                                        className="w-20 h-24 text-[40px] font-bold text-center border-2 border-gray-300 rounded-xl focus:border-[#f16522] focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all duration-200 bg-gray-50"
+                                        className="w-full h-auto text-[30px] md:text-[40px] font-bold text-center border-2 border-gray-300 rounded-xl focus:border-[#f16522] focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all duration-200 bg-gray-50"
                                         disabled={verifyingOtp}
                                     />
                                 ))}
