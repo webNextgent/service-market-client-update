@@ -302,7 +302,7 @@ const Services = () => {
                                     `}</style>
 
                                     {/* CONTENT */}
-                                    <div className="px-3 md:px-9 mt-3 space-y-6">
+                                    <div className="px-5 md:px-9 mt-3 space-y-6">
                                         {content
                                             ?.filter((c) => c.serviceId === service.id)
                                             .map((c) => (
@@ -343,41 +343,46 @@ const Services = () => {
             </div>
 
             {/* for mobile & tablet view  */}
-            <div className="lg:hidden fixed bottom-0 left-0 w-full bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.08)] border-t border-gray-200 z-40">
-                <div className="flex justify-center px-3 py-2">
-                    <div className="flex items-center gap-4">
+            {itemSummary === undefined ? null : itemSummary.length === 0 ? (
+                <div className="lg:hidden fixed bottom-0 left-0 w-full shadow-[0_-2px_10px_rgba(0,0,0,0.08) z-40 bg-[#90dae7] text-center">
+                    <p className="text-[#056677] py-3 font-medium">Add an item to continue</p>
+                </div>
+            ) : (
+                <div className="lg:hidden fixed bottom-0 left-0 w-full bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.08)] border-t border-gray-200 z-40">
+                    <div className="flex justify-center px-3 py-2">
+                        <div className="flex items-center gap-4">
 
-                        {/* View Summary */}
-                        <button
-                            onClick={() => setOpen(true)}
-                            className="cursor-pointer select-none
+                            {/* View Summary */}
+                            <button
+                                onClick={() => setOpen(true)}
+                                className="cursor-pointer select-none
                    active:scale-[0.98] transition-transform
                    focus:outline-none focus:ring-2
                    focus:ring-blue-500 focus:ring-offset-2
                    rounded-lg px-1"
-                        >
-                            <p className="text-[10px] text-gray-500 font-medium uppercase">
-                                View Summary
-                            </p>
-                            <div className="flex items-center gap-1.5 justify-center">
-                                <img src={dirhum} className="w-3.5 h-3.5" alt="" />
-                                <span className="text-base font-bold text-gray-900">
-                                    {totalAfterDiscount.toFixed(2)}
-                                </span>
-                                <span className="text-gray-400 text-sm">›</span>
+                            >
+                                <p className="text-[10px] text-gray-500 font-medium uppercase">
+                                    View Summary
+                                </p>
+                                <div className="flex items-center gap-1.5 justify-center">
+                                    <img src={dirhum} className="w-3.5 h-3.5" alt="" />
+                                    <span className="text-base font-bold text-gray-900">
+                                        {totalAfterDiscount.toFixed(2)}
+                                    </span>
+                                    <span className="text-gray-400 text-sm">›</span>
+                                </div>
+                            </button>
+
+                            {/* Next Button (Fixed Width) */}
+                            <div className="w-[140px]">
+                                <NextBtn
+                                    disabled={itemSummary.length === 0}
+                                />
                             </div>
-                        </button>
 
-                        {/* Next Button (Fixed Width) */}
-                        <div className="w-[140px]">
-                            <NextBtn
-                                disabled={itemSummary.length === 0}
-                            />
                         </div>
-
                     </div>
-                </div>
-            </div>
+                </div>)}
 
             <div className="hidden lg:block">
                 <NextBtn disabled={itemSummary.length === 0} />

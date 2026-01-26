@@ -44,7 +44,7 @@ const CoverContent = ({ content }) => {
                                 <h2 className="text-base md:text-md font-medium mb-1.5 line-clamp-1">
                                     {property.title}
                                 </h2>
-                                <p className="text-xs md:w-[80%] w-[85%] font-medium product-item-description">
+                                <p className="text-xs md:w-[80%] w-[85%] md:font-medium product-item-description">
                                     {property.description}
                                 </p>
                             </div>
@@ -52,11 +52,12 @@ const CoverContent = ({ content }) => {
                             {/* Price & Button - Professional Layout */}
                             <div className="flex items-center justify-between">
                                 {/* Price - Compact Professional */}
-                                <div className="flex items-center flex-col sm:items-center sm:flex-row md:gap-2">
-                                    <p className="text-xs font-medium">Starting from</p>
+                                <div className="md:flex items-start md:items-center md:gap-2">
+                                    <div className="text-xs font-medium">Starting from</div>
+
                                     <div className="flex items-center">
                                         <img
-                                            className="h-3 w-3 md:h-3.5 md:w-3.5"
+                                            className="h-3.5 w-3.5"
                                             src={dirhum}
                                             alt="AED"
                                         />
@@ -65,6 +66,7 @@ const CoverContent = ({ content }) => {
                                         </span>
                                     </div>
                                 </div>
+
 
                                 {/* Button - Professional Compact */}
                                 <div className="">
