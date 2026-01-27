@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import dirhum from '../../../assets/icon/dirhum.png';
 
 const containerStyle = { width: "100%", height: "500px" };
-const defaultCenter = { lat: 23.8103, lng: 90.4125 };
+const defaultCenter = { lat: 25.2048, lng: 55.2708 };
 
 export default function LocationPicker() {
     const navigate = useNavigate();
@@ -139,10 +139,10 @@ export default function LocationPicker() {
     if (!isLoaded) return <div>Loading map…</div>;
     return (
         <div>
-            <div className="mt-10 md:mt-0">
+            <div className="hidden md:bg-local mt-10 md:mt-0">
                 <ServiceDetails title="Address" currentStep={2} />
             </div>
-            <div className="flex justify-center gap-8 mt-5">
+            <div className="flex justify-center gap-8 mt-8 md:mt-5">
                 <div className="md:w-[60%] mb-4 space-y-4 relative shadow-md w-full p-1" confir>
                     <h2 className="text-[27px] font-semibold ml-12">Where do you need the service?</h2>
 

@@ -2,7 +2,7 @@ const Cover = ({ content }) => {
 
     return (
         <section
-            className="relative w-full h-40 md:h-[130px] lg:h-[200px] bg-center bg-cover rounded-md overflow-hidden"
+            className="relative w-full h-38 md:h-[130px] lg:h-[200px] bg-center bg-cover rounded-md overflow-hidden"
             style={{ backgroundImage: `url(${content.image})` }} 
             aria-label={content.title}
         >

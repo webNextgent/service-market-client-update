@@ -84,11 +84,11 @@ const onSubmit = (data) => {
 
     return (
         <div>
-            <div className="mt-10 md:mt-0">
+            <div className="hidden md:block mt-10 md:mt-0">
                 <ServiceDetails title="Address" currentStep={2} />
             </div>
 
-            <div className="flex gap-8">
+            <div className="flex gap-8 mt-8 md:mt-0">
                 <div className="lg:w-[60%] mb-4 space-y-4 w-full">
                     <div className="bg-white rounded-xl shadow-lg w-full p-5">
                         {/* TYPE BUTTONS */}

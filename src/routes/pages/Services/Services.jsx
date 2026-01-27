@@ -26,6 +26,8 @@ const Services = () => {
     const [quantities, setQuantities] = useState({});
     const [showBackdrop, setShowBackdrop] = useState(false);
     const [open, setOpen] = useState(false);
+    const HEADER_OFFSET = 180;
+    const isManualClick = useRef(false);
 
     // Scroll active button into view
     useEffect(() => {
@@ -51,39 +53,32 @@ const Services = () => {
 
     // Intersection Observer for detecting visible sections
     useEffect(() => {
-        const observers = [];
+        if (!content?.length) return;
 
-        content?.forEach((c) => {
-            const element = sectionRefs.current[c.id];
-            if (!element) return;
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute("data-id");
+                        if (id) setActiveId(id);
+                    }
+                });
+            },
+            {
+                root: null,
+                rootMargin: `-${HEADER_OFFSET}px 0px -50% 0px`,
+                threshold: 0,
+            }
+        );
 
-            const observer = new IntersectionObserver(
-                (entries) => {
-                    entries.forEach((entry) => {
-                        if (entry.isIntersecting) {
-                            // Update activeId when section is visible
-                            setActiveId(c.id);
-                        }
-                    });
-                },
-                {
-                    root: null,
-                    rootMargin: '-20% 0px -70% 0px',
-                    threshold: 0.1
-                }
-            );
-
-            observer.observe(element);
-            observers.push({ observer, element });
+        content.forEach((c) => {
+            const el = sectionRefs.current[c.id];
+            if (el) observer.observe(el);
         });
 
-        return () => {
-            observers.forEach(({ observer, element }) => {
-                if (element) observer.unobserve(element);
-                observer.disconnect();
-            });
-        };
+        return () => observer.disconnect();
     }, [content]);
+
 
     const handleAdd = (id) => {
         setQuantities((prev) => ({
@@ -125,18 +120,63 @@ const Services = () => {
     };
 
     // Function to scroll to section (when button is clicked)
+    // const scrollToSection = useCallback((contentId) => {
+    //     if (sectionRefs.current[contentId]) {
+    //         const section = sectionRefs.current[contentId];
+    //         const yOffset = -120;
+    //         const y = section.getBoundingClientRect().top + window.scrollY + yOffset;
+    //         window.scrollTo({ top: y, behavior: "smooth" });
+    //     }
+    // }, []);
+
     const scrollToSection = useCallback((contentId) => {
-        if (sectionRefs.current[contentId]) {
-            const section = sectionRefs.current[contentId];
-            const yOffset = -120;
-            const y = section.getBoundingClientRect().top + window.scrollY + yOffset;
-            window.scrollTo({ top: y, behavior: "smooth" });
-        }
+        const section = sectionRefs.current[contentId];
+        if (!section) return;
+
+        const y =
+            section.getBoundingClientRect().top +
+            window.scrollY -
+            HEADER_OFFSET;
+
+        window.scrollTo({
+            top: y,
+            behavior: "smooth",
+        });
+
+        setActiveId(contentId); // 👈 immediately sync
     }, []);
+
+
+    useEffect(() => {
+        if (isManualClick.current) return; // 👈 vibration killer
+
+        if (activeId && buttonSliderRefs.current[activeId]) {
+            const buttonElement = buttonSliderRefs.current[activeId];
+            const sliderContainer = buttonElement?.closest('.overflow-x-auto');
+
+            if (sliderContainer && buttonElement) {
+                const containerRect = sliderContainer.getBoundingClientRect();
+                const buttonRect = buttonElement.getBoundingClientRect();
+
+                if (
+                    buttonRect.left < containerRect.left ||
+                    buttonRect.right > containerRect.right
+                ) {
+                    buttonElement.scrollIntoView({
+                        behavior: 'auto', // 👈 smooth নয়
+                        block: 'nearest',
+                        inline: 'center',
+                    });
+                }
+            }
+        }
+    }, [activeId]);
+
+
 
     return (
         <div>
-            <div className="mt-10 md:mt-0">
+            <div className="hidden md:block mt-10 md:mt-0">
                 <ServiceDetails title="Service Details" currentStep={1} />
             </div>
 
@@ -241,7 +281,7 @@ const Services = () => {
                                     <Card service={service} />
 
                                     {/* BUTTON SLIDER */}
-                                    <div className="px-2 md:px-9 bg-white py-3 sticky top-16 z-1">
+                                    <div className="px-2 md:px-9 bg-white pt-5 md:py-4 sticky top-16 z-1">
                                         <div className="flex items-center justify-center gap-2">
                                             <button
                                                 onClick={() => {
@@ -268,8 +308,13 @@ const Services = () => {
                                                             key={b.id}
                                                             ref={(el) => (buttonSliderRefs.current[b.id] = el)}
                                                             onClick={() => {
+                                                                isManualClick.current = true;      // 👈 START manual click
                                                                 setActiveId(b.id);
                                                                 scrollToSection(b.id);
+
+                                                                setTimeout(() => {
+                                                                    isManualClick.current = false; // 👈 END manual click
+                                                                }, 500);
                                                             }}
                                                             className={`snap-start shrink-0 min-w-[140px] px-4 py-1 rounded-full border flex items-center gap-2 transition
                                                                 ${activeId === b.id
@@ -309,7 +354,7 @@ const Services = () => {
                                                 <div
                                                     key={c.id}
                                                     ref={(el) => (sectionRefs.current[c.id] = el)}
-                                                    className="scroll-mt-24"
+                                                    data-id={c.id}
                                                 >
                                                     <Cover content={c} />
                                                     <CoverContent content={c} />

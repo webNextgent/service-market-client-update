@@ -133,12 +133,12 @@ export default function Confirmation() {
 
     return (
         <div className="md:pb-14">
-            <div className="mt-10 md:mt-0">
+            <div className="hidden md:block">
                 <ServiceDetails title="Review & Confirm" currentStep={4} />
             </div>
 
-            <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-5 md:p-7 text-[#4E4E4E]">
-                <h2 className="text-lg font-semibold mb-4">Booking Details</h2>
+            <div className="max-w-3xl mx-auto bg-white rounded-2xl mt-6 md:mt-0 shadow-lg p-5 md:p-7 text-[#4E4E4E]">
+                <h2 className="text-lg text-center md:text-start font-semibold mb-4">Booking Details</h2>
 
                 <div className="flex items-start gap-3 mb-3">
                     <IoBagRemoveSharp className="text-2xl" />

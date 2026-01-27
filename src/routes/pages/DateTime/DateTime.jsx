@@ -150,7 +150,6 @@ const DateTime = () => {
     if (isLoading) {
         return (
             <div>
-                <ServiceDetails title="Date & Time" currentStep={3} />
                 <div className="flex justify-center items-center h-64">
                     <div className="text-center">
                         <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
@@ -163,7 +162,9 @@ const DateTime = () => {
 
     return (
         <div className="mt-10 md:mt-0">
-            <ServiceDetails title="Date & Time" currentStep={3} />
+            <div className="hidden md:block mt-6 md:mt-0">
+                <ServiceDetails title="Date & Time" currentStep={3} />
+            </div>
 
             <div className="flex gap-8 mt-5">
                 <div className="md:w-[60%] mb-4 space-y-4">
