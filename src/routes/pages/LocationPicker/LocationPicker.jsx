@@ -25,6 +25,7 @@ export default function LocationPicker() {
         liveAddress?.id || null
     );
 
+
     const handleAddressSelect = (addr) => {
         setSelectedAddressId(addr.id);
         setLiveAddress(addr);
@@ -139,16 +140,17 @@ export default function LocationPicker() {
     if (!isLoaded) return <div>Loading map…</div>;
     return (
         <div>
-            <div className="hidden md:bg-local mt-10 md:mt-0">
+            <div className="mt-10 md:mt-0">
                 <ServiceDetails title="Address" currentStep={2} />
             </div>
-            <div className="flex justify-center gap-8 mt-8 md:mt-5">
-                <div className="md:w-[60%] mb-4 space-y-4 relative shadow-md w-full p-1" confir>
-                    <h2 className="text-[27px] font-semibold ml-12">Where do you need the service?</h2>
+            <div className="flex justify-center gap-8 md:mt-5">
+                <div className="md:w-[60%] mb-4 space-y-1 relative shadow-md w-full px-6 py-6 md:p-10" confir>
+                    <h2 className="text-[24px] text-center md:text-start font-semibold">Where do you need the service?</h2>
+                    <p className="text-center md:text-start">Please select your current address or add a new address</p>
 
                     {
                         saveAddress.length > 0 && !showMapForNew ?
-                            <div className="space-y-4 p-6">
+                            <div className="">
                                 <h3 className="text-xl font-semibold mb-4">
                                     Select your address
                                 </h3>
@@ -159,7 +161,7 @@ export default function LocationPicker() {
                                         onClick={() => handleAddressSelect(addr)}
                                         className={`border rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors
                                             ${selectedAddressId === addr.id
-                                                ? "border-blue-500 bg-blue-50"
+                                                ? "border-[#01788E] bg-white"
                                                 : ""
                                             }`}
                                     >
@@ -168,8 +170,8 @@ export default function LocationPicker() {
                                                 <div
                                                     className={`w-4 h-4 rounded-full border-2
                                 ${selectedAddressId === addr.id
-                                                            ? "border-blue-500 bg-blue-500"
-                                                            : "border-gray-400"
+                                                            ? "border-[#01788E] bg-white"
+                                                            : "border-[#01788E]"
                                                         }`}
                                                 ></div>
                                             </div>
@@ -190,11 +192,11 @@ export default function LocationPicker() {
                                                 )}
                                             </div>
 
-                                            {selectedAddressId === addr.id && (
-                                                <div className="text-blue-500 font-medium">
+                                            {selectedAddressId === addr.id ? (
+                                                <div className="text-[#01788E] font-medium">
                                                     ✓ Selected
                                                 </div>
-                                            )}
+                                            ) : (null)}
                                         </div>
                                     </div>
                                 ))}
@@ -211,7 +213,7 @@ export default function LocationPicker() {
                                                 setSelectedPos({ lat: mapLatitude, lng: mapLongitude });
                                             }
                                         }}
-                                        className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2"
+                                        className="text-[#01788E] font-medium flex items-center gap-2"
                                     >
                                         <FaPlus /> Add New Address
                                     </button>

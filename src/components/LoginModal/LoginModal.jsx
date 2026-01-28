@@ -450,7 +450,6 @@ const LoginModal = ({ open, onClose }) => {
     );
 
     if (!open) return null;
-
     return (
         <div
             className=" fixed inset-0 z-50 bg-black/40 backdrop-blur-sm
@@ -581,7 +580,7 @@ const LoginModal = ({ open, onClose }) => {
                                         onChange={(e) => handleChange(index, e.target.value)}
                                         onKeyDown={(e) => handleKeyDown(index, e)}
                                         onFocus={(e) => e.target.select()}
-                                        className="w-full h-auto text-[30px] md:text-[40px] font-bold text-center border-2 border-gray-300 rounded-xl focus:border-[#f16522] focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all duration-200 bg-gray-50"
+                                        className="w-full h-auto text-[30px] md:text-[40px] font-semibold text-center border-2 border-gray-300 rounded-lg focus:border-[#f16522] focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all duration-200 bg-gray-50"
                                         disabled={verifyingOtp}
                                     />
                                 ))}

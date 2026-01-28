@@ -67,17 +67,18 @@ const ContentModal = ({ setShowModal, property }) => {
     return (
         <>
             {/* Main Modal */}
-            <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-2 sm:p-4">
+            <div className="fixed inset-0 bg-black/70 z-50 flex md:items-center md:justify-center">
                 <div
                     className="absolute inset-0"
                     onClick={() => setShowModal(false)}
                 />
                 <div
-                    className="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-auto flex flex-col max-h-[90vh] relative z-10"
+                    className="bg-white w-full md:max-w-2xl md:rounded-xl rounded-t-2xl shadow-2xl fixed bottom-0 md:static flex flex-col h-[70vh] md:h-[90vh]
+                 transform transition-transform duration-300 translate-y-0 z-10"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header */}
-                    <div className="sticky top-0 bg-white z-20 border-b border-gray-300 rounded-t-xl px-4 sm:px-6 py-4 mb-8">
+                    <div className="sticky top-0 bg-white z-20 border-b border-gray-300 md:rounded-t-xl px-4 sm:px-6 py-4 mb-4">
                         <div className="flex items-center justify-between">
                             <button
                                 onClick={() => setShowModal(false)}
@@ -148,7 +149,7 @@ const ContentModal = ({ setShowModal, property }) => {
                                                         {qty === 0 ? (
                                                             <button
                                                                 onClick={() => handleAdd(item.id)}
-                                                                className="border border-[#01788E] text-[#01788E] px-4 py-2 rounded flex items-center justify-center gap-2 font-medium text-sm sm:text-base cursor-pointer"
+                                                                className="border border-[#01788E] text-[#01788E] px-3 py-1.5 rounded flex items-center justify-center gap-1 font-medium text-sm sm:text-base cursor-pointer"
                                                             >
                                                                 <span>Add</span>
                                                                 <IoAddSharp className="text-xl" />
@@ -190,10 +191,10 @@ const ContentModal = ({ setShowModal, property }) => {
                     </div>
 
                     {/* Footer - Sticky Bottom */}
-                    <div className="sticky bottom-0 bg-white border-t border-gray-100 rounded-b-xl px-4 sm:px-6 py-4 z-9999">
+                    <div className="sticky bottom-0 bg-white border-t border-gray-100 md:rounded-b-xl px-4 sm:px-6 py-4">
                         <button
                             onClick={() => setShowModal(false)}
-                            className="w-full bg-[#ED6329] hover:bg-[#e0551f] text-white font-semibold py-3.5 sm:py-4 rounded-lg text-base sm:text-lg uppercase tracking-wide transition-all duration-200 active:scale-[0.98]"
+                            className="w-full bg-[#ED6329] hover:bg-[#e0551f] text-white font-semibold py-3.5 sm:py-4 rounded text-base sm:text-lg uppercase tracking-wide transition-all duration-200 active:scale-[0.98]"
                         >
                             Continue
                         </button>

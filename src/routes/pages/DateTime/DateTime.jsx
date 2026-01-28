@@ -14,7 +14,8 @@ const DateTime = () => {
     const [selectedTime, setSelectedTime] = useState(null);
     const scrollerRef = useRef(null);
     const [open, setOpen] = useState(false);
-    const { itemSummary, totalAfterDiscount, serviceTitle, showInput, setShowInput, setDate, setTime, liveAddress, totalVatRate } = useSummary();
+    const { itemSummary, totalAfterDiscount, serviceTitle, showInput, setShowInput, setDate, setTime, liveAddress, totalVatRate, setCassieModalOpen } = useSummary();
+
 
     const { data: dateTime, isLoading } = useQuery({
         queryKey: ['date-time-user'],
@@ -336,7 +337,14 @@ const DateTime = () => {
 
                         {/* Next Button (Fixed Width) */}
                         <div className="w-[140px]">
-                            <NextBtn disabled={!selectedDay || !selectedTime} />
+                            <NextBtn
+                                // disabled={!selectedDay || !selectedTime}
+                                disabled={!selectedDay || !selectedTime}
+                                onClick={() => {
+                                    setCassieModalOpen(true);
+                                    return false;
+                                }}
+                            />
                         </div>
 
                     </div>
@@ -344,9 +352,70 @@ const DateTime = () => {
             </div>
 
             <div className="hidden lg:block">
-                <NextBtn disabled={!selectedDay || !selectedTime} />
+                <NextBtn
+                    // disabled={!selectedDay || !selectedTime}
+                    disabled={!selectedDay || !selectedTime}
+                    onClick={() => {
+                        setCassieModalOpen(true);
+                        return false;
+                    }}
+                />
             </div>
-        </div>
+
+
+            {/* {showGuestModal && (
+                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center px-4">
+                    <div className="bg-white w-full max-w-md rounded-lg p-6 relative">
+                        <h2 className="text-lg font-semibold mb-4">
+                            Enter your details
+                        </h2>
+
+                        <div className="space-y-3">
+                            <input
+                                type="text"
+                                placeholder="First Name"
+                                className="w-full border p-3 rounded"
+                            />
+                            <input
+                                type="text"
+                                placeholder="Last Name"
+                                className="w-full border p-3 rounded"
+                            />
+                            <input
+                                type="email"
+                                placeholder="Email"
+                                className="w-full border p-3 rounded"
+                            />
+                        </div>
+
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={() => {
+                                    setUserInfo({ firstName, lastName, email });
+                                    setShowGuestModal(false);
+                                    navigate("/confirmation");
+                                }}
+                                className="flex-1 border py-2 rounded"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    // save modal data if needed
+                                    setShowGuestModal(false);
+                                    navigate("/confirmation");
+                                }}
+                                className="flex-1 bg-[#ED6329] text-white py-2 rounded"
+                            >
+                                Continue
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )
+            } */}
+        </div >
     );
 };
 

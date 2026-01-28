@@ -26,11 +26,17 @@ import axiosSecure from "../utils/axiosSecure";
 import ProtectedRouteUser from "./ProtectedRouteUser";
 import UserManagement from "../AdminDashboard/UserManagement";
 import ProtectedRouteAdmin from "./ProtectedRouteAdmin";
+import ScrollToTop from "../components/ScrollToTop/ScrollToTop";
 
 export const router = createBrowserRouter([
     {
         path: '/',
-        element: <Main />,
+        element: (
+            <>
+                <ScrollToTop />
+                <Main />
+            </>
+        ),
         children: [
             { path: '/', element: <Home /> },
             { path: 'location', element: <ProtectedRouteUser><LocationPicker /></ProtectedRouteUser> },

@@ -36,7 +36,7 @@ const Navbar = () => {
 
     return (
         <>
-            <div className="fixed top-0 left-0 w-full z-50 bg-white shadow-md md:px-12 navbar md:flex md:justify-center md:items-center">
+            <div className="fixed top-0 left-0 w-full z-50 bg-white shadow-md px-6 md:px-12 navbar md:flex md:justify-center md:items-center">
                 {/* Left */}
                 <div className="navbar-start flex items-center">
                     <Link to="/">

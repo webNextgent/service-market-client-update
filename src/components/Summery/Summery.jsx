@@ -250,7 +250,7 @@ export default function Summary({ itemSummary, showInput, setShowInput, address,
                     ${open ? "bottom-0" : "-bottom-full"}`}
                 style={{
                     maxHeight: '85vh',
-                    height: '85vh',
+                    height: '60vh',
                     top: 'auto'
                 }}
             >

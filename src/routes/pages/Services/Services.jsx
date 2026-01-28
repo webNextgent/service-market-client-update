@@ -119,16 +119,6 @@ const Services = () => {
         setQuery("");
     };
 
-    // Function to scroll to section (when button is clicked)
-    // const scrollToSection = useCallback((contentId) => {
-    //     if (sectionRefs.current[contentId]) {
-    //         const section = sectionRefs.current[contentId];
-    //         const yOffset = -120;
-    //         const y = section.getBoundingClientRect().top + window.scrollY + yOffset;
-    //         window.scrollTo({ top: y, behavior: "smooth" });
-    //     }
-    // }, []);
-
     const scrollToSection = useCallback((contentId) => {
         const section = sectionRefs.current[contentId];
         if (!section) return;
@@ -143,13 +133,12 @@ const Services = () => {
             behavior: "smooth",
         });
 
-        setActiveId(contentId); // 👈 immediately sync
+        setActiveId(contentId);
     }, []);
 
 
     useEffect(() => {
-        if (isManualClick.current) return; // 👈 vibration killer
-
+        if (isManualClick.current) return; 
         if (activeId && buttonSliderRefs.current[activeId]) {
             const buttonElement = buttonSliderRefs.current[activeId];
             const sliderContainer = buttonElement?.closest('.overflow-x-auto');
@@ -163,7 +152,7 @@ const Services = () => {
                     buttonRect.right > containerRect.right
                 ) {
                     buttonElement.scrollIntoView({
-                        behavior: 'auto', // 👈 smooth নয়
+                        behavior: 'auto',
                         block: 'nearest',
                         inline: 'center',
                     });
@@ -308,12 +297,12 @@ const Services = () => {
                                                             key={b.id}
                                                             ref={(el) => (buttonSliderRefs.current[b.id] = el)}
                                                             onClick={() => {
-                                                                isManualClick.current = true;      // 👈 START manual click
+                                                                isManualClick.current = true;
                                                                 setActiveId(b.id);
                                                                 scrollToSection(b.id);
 
                                                                 setTimeout(() => {
-                                                                    isManualClick.current = false; // 👈 END manual click
+                                                                    isManualClick.current = false;
                                                                 }, 500);
                                                             }}
                                                             className={`snap-start shrink-0 min-w-[140px] px-4 py-1 rounded-full border flex items-center gap-2 transition
@@ -390,7 +379,7 @@ const Services = () => {
             {/* for mobile & tablet view  */}
             {itemSummary === undefined ? null : itemSummary.length === 0 ? (
                 <div className="lg:hidden fixed bottom-0 left-0 w-full shadow-[0_-2px_10px_rgba(0,0,0,0.08) z-40 bg-[#90dae7] text-center">
-                    <p className="text-[#056677] py-3 font-medium">Add an item to continue</p>
+                    <p className="text-[#056677] py-1.5 font-medium">Add an item to continue</p>
                 </div>
             ) : (
                 <div className="lg:hidden fixed bottom-0 left-0 w-full bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.08)] border-t border-gray-200 z-40">
